@@ -4,7 +4,7 @@
   <meta charset='utf-8'>
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
   <meta name="viewport" content="width=device-width">
-  <title>Cycle.js - Getting started</title>
+  <title>Cycle.js - 起步</title>
 
   <!-- Flatdoc -->
   <script src='support/vendor/jquery.js'></script>
@@ -24,49 +24,49 @@
   <link href='support/vendor/highlight-github-gist.css' rel='stylesheet'>
 
   <!-- Meta -->
-  <meta content="Cycle.js - Getting started" property="og:title">
-  <meta content="A functional and reactive JavaScript framework for predictable code" name="description">
+  <meta content="Cycle.js - 起步" property="og:title">
+  <meta content="一个函数式和响应式的 JavaScript 框架，用来编写前瞻性代码。" name="description">
 
   <!-- Content -->
   <script id="markdown" type="text/markdown" src="index.html">
-# Getting started
+# 起步
 
-## Consider create-cycle-app
+## 试试 create-cycle-app
 
-The quickest way to create a new project with Cycle.js is by using [create-cycle-app](https://github.com/cyclejs-community/create-cycle-app), giving you the choice between ES6 or TypeScript, Browserify or Webpack.
+创建一个 Cycle.js 项目最快的方法就是使用 [create-cycle-app](https://github.com/cyclejs-community/create-cycle-app)，它提供了 ES6 或 TypeScript、Browserify 或 Webpack 的选项。
 
 > [create-cycle-app >](https://github.com/cyclejs-community/create-cycle-app)
 
-First install Create Cycle App globally in your system.
+在第一次时需要把 `create-cycle-app` 全局安装到你的系统当中：
 
 ```bash
 npm install --global create-cycle-app
 ```
 
-Then, this command will create a project called *my-awesome-app* (or another name of your choice) with Cycle *Run* and Cycle *DOM*.
+然后，用下面这个命令创建一个名为 *my-awesome-app* （也可以换成你自己想写的名字）的项目，它会带有 Cycle *Run* 和 Cycle *DOM*。
 
 ```
 create-cycle-app my-awesome-app
 ```
 
-If you want to use typescript use the `one-fits-all` flavor.
+如果你想用 TypeScript 的话就加一个 `--falvor one-fits-all`。
 ```
 create-cycle-app my-awesome-app --flavor cycle-scripts-one-fits-all
 ```
 
-## Install from npm
+## 用 npm 安装
 
-If you want to have more control over your project, the recommended channel for downloading Cycle.js as a package is through [npm](http://npmjs.org/).
+如果你想对你的项目有更多的控制权，推荐使用 [npm](http://npmjs.org/) 来下载安装 Cycle.js。
 
-Create a new directory and run this npm command inside that directory. This installs [xstream](http://staltz.com/xstream), Cycle *Run*, and Cycle *DOM*.
+创建一个新目录并在这个目录中使用这条 npm 命令，它会安装 [xstream](http://staltz.com/xstream)、Cycle *Run* 及 Cycle *DOM*：
 
 ```
 npm install xstream @cycle/run @cycle/dom
 ```
 
-Packages *xstream* and *Run* are the minimum required API to work with Cycle.js. The *Run* package includes a single function `run()`, and Cycle *DOM* is the standard DOM Driver providing a way to interface with the DOM. You can also use Cycle.js with other stream libraries like RxJS or Most.js.
+*xstream* 和 *Run* 这两个包是运行 Cycle.js 最起码需要安装的 API。*Run* 仅包含了一个函数 `run()`，而 Cycle *DOM* 是一个标准的 DOM Driver，提供一个操作 DOM 的方法；对于数据流（Stream）操作库，你还可以使用其它像 RxJS 或 Most.js 之类的。
 
-> We recommend xstream if you don't know what to choose.
+> 如果你不知道该怎么去选择，我们推荐使用 xstream。
 
 ```
 npm install xstream @cycle/run
@@ -84,17 +84,17 @@ npm install rxjs @cycle/rxjs-run
 npm install most @cycle/most-run
 ```
 
-Note: packages of the type `@org/package` are [npm scoped packages](https://docs.npmjs.com/getting-started/scoped-packages), supported if your npm installation is version 2.11 or higher. Check your npm version with `npm --version` and upgrade in order to install Cycle.js.
+注意：像 `@org/package` 这种类型的包，是 [npm scoped packages](https://docs.npmjs.com/getting-started/scoped-packages)，需要你的 npm 版本在 2.11 或以上。你可以通过 `npm --version` 检查是否需要升级 npm 以安装 Cycle.js。
 
-In case you are not dealing with a DOM-interfacing web application, you can omit `@cycle/dom` when installing.
+如果你不是在用 DOM 接口构建 Web 应用，你可以不用安装 `@cycle/dom`。
 
-## Coding
+## 编码
 
-We recommend the use of a bundling tool such as [browserify](http://browserify.org/) or [webpack](http://webpack.github.io/), in combination with ES6 (a.k.a. ES2015) through a transpiler (e.g. [Babel](http://babeljs.io/) or [TypeScript](http://typescriptlang.org/)). Most of the code examples in this documentation assume some basic familiarity with ES6.
+我们建议使用一个打包工具，比如 [browserify](http://browserify.org/) 或 [webpack](http://webpack.github.io/)；以及一些转换器用来支持 ES6（或者叫 ES2015），比如 [Babel](http://babeljs.io/) 或 [TypeScript](http://typescriptlang.org/)。本文档大部分的示例代码都是用 ES6 语法的。
 
-### Import libraries
+### 导入库
 
-Once your build system is set up, start writing your main JavaScript source file like this, to import the libraries. The second line imports the function `run(main, drivers)`, where `main` is the entry point for our whole application, and `drivers` is a record of driver functions labeled by some name.
+当你的构建系统安装好之后，可以像下面这样来开始编写你的 JavaScript 主文件。第二行导入了 `fun(main, drivers)` 函数，这里的 `main· 是我们整个应用的入口，而 `drivers` 则是记录了一些 driver 函数的键值对。
 
 ```js
 import xs from 'xstream';
@@ -104,9 +104,9 @@ import {makeDOMDriver} from '@cycle/dom';
 // ...
 ```
 
-### Create `main` and `drivers`
+### 创建 `main` 和 `drivers`
 
-Then, write a `main` function, for now with empty contents. `makeDOMDriver(container)` from Cycle *DOM* returns a driver function to interact with the DOM. This function is registered under the key `DOM` in the `drivers` object.
+然后，编写一个 `main` 函数，现在咱们暂时不写内容。`makeDOMDriver(container)` 来自 Cycle *DOM*，它会返回一个用来操作 DOM 的 driver 函数，这个函数我们把它放到 `drivers` 的 `DOM` 字段上。
 
 ```js
 function main() {
@@ -118,15 +118,15 @@ const drivers = {
 };
 ```
 
-Then, call `run()` to connect the main function with the drivers.
+然后，调用 `run()` 去连接 `main` 函数和 `drivers`。
 
 ```js
 run(main, drivers);
 ```
 
-### Send messages from `main`
+### 从 `main` 发消息
 
-We have filled the `main()` function with some code: returns an object `sinks` which has an `xstream` stream defined under the name `DOM`. This indicates `main()` is sending the stream as messages to the DOM driver. Sinks are outgoing messages. The stream emits Virtual DOM `<h1>` elements displaying `${i} seconds elapsed` changing over time every second, where `${i}` is replaced by `0`, `1`, `2`, etc.
+我们在 `main()` 函数里写了一些代码：返回一个 `sinks` 对象，`sinks` 对象里面有一个 `xstream` 的数据流挂了在 `DOM` 这个字段上。这里我们能看到 `main()` 正在将一个数据流发送作为消息发送给 DOM driver。Sinks 就是我们要发送的消息。这个数据流发送了一个 Virutal DOM，里面有一个显示着 `${i} seconds elapsed` 的 `<h1>` 元素。这里的 `i` 每秒都会变，会被 `${i}` 替换成 `0`、`1` 和 `2` 之类的。
 
 ```js
 function main() {
@@ -139,17 +139,17 @@ function main() {
 }
 ```
 
-Also, remember to import `h1` from Cycle DOM.
+对了，记得把 `h1` 导入到 Cycle DOM 中。
 
-> In the beginning of the file:
+> 像这么写:
 
 ```js
 import {makeDOMDriver, h1} from '@cycle/dom';
 ```
 
-### Catch messages into `main`
+### 捕获消息到 `main` 中
 
-Function `main()` now takes `sources` as input. Just like the output `sinks`, the input `sources` follow the same structure: an object containing `DOM` as a property. Sources are incoming messages. `sources.DOM` is an object with a queryable API to get streams. Use `sources.DOM.select(selector).events(eventType)` to get a stream of `eventType` DOM events happening on the element(s) specified by `selector`. This `main()` function takes the stream of `click` events happening on `input` elements, and maps those toggling events to Virtual DOM elements displaying a togglable checkbox.
+`main()` 函数现在从拿到 `sources` 作为输入。跟输出的 `sinks` 一样，输入的 `sources` 使用的是同样的数据结构：一个包括了 `DOM` 字段的对象。`sources` 是一些输入的消息，`sources.DOM` 是一个可以可查询（queryable）并得到 Stream 的 API。。使用 `sources.DOM.select(selector).events(eventType)` 可以得到一个数据流，这个数据里面是一些我们用 `eventType` 指定的这类型的事件，来自我们使用 `selector` 指定的元素上。在下面的代码中，我们把来自 `input` 元素 `click` 事件的数据流中的每个数据映射到一个 Virtual DOM 上，以显示一个可以切换状态的复选框（checkbox）。
 
 ```js
 function main(sources) {
@@ -168,25 +168,26 @@ function main(sources) {
 }
 ```
 
-Remember to import new element types from Cycle DOM.
+别忘了从 Cycle DOM 中导入一些新类型的元素。
 
-> In the beginning of the file:
+> 像这么写：
 
 ```js
 import {makeDOMDriver, div, input, p} from '@cycle/dom';
 ```
 
-### Consider JSX
+### 试试 JSX
 
-We used the `div()`, `input()`, `p()` helper functions to create virtual DOM elements for the respective `<div>`, `<input>`, `<p>` DOM elements, but you can also use JSX with Babel. The following only works if you are building with Babel:
+我们刚刚使用了 `div()`、`input()`、`p()` 函数去创建 Vitual DOM 元素，以得到我们期望的 `<div>`、`<input>` 和 `<p>` DOM 元素，但其实我们还可以用 Babel 来支持 JSX 语法。下面只有在你使用 Babel 来构建时才可以用：
 
-(1) Install the npm packages [babel-plugin-transform-react-jsx](http://babeljs.io/docs/plugins/transform-react-jsx/) and [snabbdom-jsx](https://www.npmjs.com/package/snabbdom-jsx).
+
+(1) 安装 npm 包 —— [babel-plugin-transform-react-jsx](http://babeljs.io/docs/plugins/transform-react-jsx/) 和 [snabbdom-jsx](https://www.npmjs.com/package/snabbdom-jsx)：
 
 ```
 npm install --save babel-plugin-transform-react-jsx snabbdom-jsx
 ```
 
-(2) Specify a pragma for JSX in the `.babelrc` file.
+(2) 在 `.babelrc` 文件中配置支持 JSX：
 
 > .babelrc
 
@@ -202,7 +203,7 @@ npm install --save babel-plugin-transform-react-jsx snabbdom-jsx
 }
 ```
 
-(3) Import Snabbdom JSX.
+(3) 引入 Snabbdom JSX：
 
 > main.js
 
@@ -213,9 +214,9 @@ import {makeDOMDriver} from '@cycle/dom';
 import {html} from 'snabbdom-jsx';
 ```
 
-(4) Use JSX as return values.
+(4) 使用 JSX 作为返回值：
 
-This example portrays the most common problem-solving pattern in Cycle.js: formulate the computer's behavior as a function of streams: continuously listen to source messages from drivers and continuously provide sinks messages (in our case, Virtual DOM elements) to the drivers. Read the next chapter to get familiar with this pattern.
+这个例子包含了 Cycle.js 中最通用的问题处理方式：明确将电脑的行为表示成一个数据流函数——不断地从 driver 中监听消息和提供给 driver 提供下一个消息（在我们的例子中就是 Virtual DOM 元素）。阅读下一章可以理解这个模式。
 
 ```jsx
 function main(sources) {
@@ -234,16 +235,16 @@ function main(sources) {
 }
 ```
 
-## Install without npm
+## 不使用 npm 来安装
 
-In the rare occasion you need Cycle.js scripts as standalone JavaScript files, you can download them from [unpkg](https://unpkg.com) directly into your HTML file:
+在一些罕见的场合你会需要一个单独的 Cycle.js 脚本文件，你可以在 [unpkg](https://unpkg.com) 上下载它们并马上使用到你的 HTML 文件当中：
 
-- Latest Cycle.js [run](https://unpkg.com/@cycle/run/dist/cycle-run.js)
-- Latest Cycle.js [most.js run](https://unpkg.com/@cycle/most-run/dist/cycle-most-run.js)
-- Latest Cycle.js [RxJS run](https://unpkg.com/@cycle/rxjs-run/dist/cycle.js)
-- Latest Cycle.js [DOM](https://unpkg.com/@cycle/dom/dist/cycle-dom.js)
-- Latest Cycle.js [HTTP](https://unpkg.com/@cycle/http/dist/cycle-http-driver.js)
-- Latest Cycle.js [Isolate](https://unpkg.com/@cycle/isolate/dist/cycle-isolate.js)
+- 最新的 Cycle.js [run](https://unpkg.com/@cycle/run/dist/cycle-run.js)
+- 最新的 Cycle.js [most.js run](https://unpkg.com/@cycle/most-run/dist/cycle-most-run.js)
+- 最新的 Cycle.js [RxJS run](https://unpkg.com/@cycle/rxjs-run/dist/cycle.js)
+- 最新的 Cycle.js [DOM](https://unpkg.com/@cycle/dom/dist/cycle-dom.js)
+- 最新的 Cycle.js [HTTP](https://unpkg.com/@cycle/http/dist/cycle-http-driver.js)
+- 最新的 Cycle.js [Isolate](https://unpkg.com/@cycle/isolate/dist/cycle-isolate.js)
 
   </script>
 
