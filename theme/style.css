@@ -160,7 +160,6 @@ a:hover {
   margin-top: 2.5rem;
   font-family: "Merriweather", "Georgia", serif;
   font-size: 25px;
-  max-width: 25em;
 }
 .hero h3 { margin-top: 4rem; margin-bottom: 1rem; text-align: center; display: block; font-size: 20px; }
 .hero h3 a { font-family: "Source Sans Pro", "Calibri", "Helvetica", sans-serif; font-weight: 400; color: #C6FC93; border: 2px solid #C6FC93; border-radius: 5px; padding: 5px 15px; transition: background-color 0.2s ease-out, color 0.2s ease-out; letter-spacing: 0; display: inline-block; }
