@@ -13,6 +13,13 @@
 ## 翻译必看的注意事项
 
 - 译文排版规则：[译文排版规则指北](https://github.com/xitu/gold-miner/wiki/%E8%AF%91%E6%96%87%E6%8E%92%E7%89%88%E8%A7%84%E5%88%99%E6%8C%87%E5%8C%97)
+- 以下名词不翻译：
+  - sink
+  - sources
+  - driver
+  - model
+  - intent
+  - view
 
 ## 贡献者名单（按参加翻译的顺序）
 
