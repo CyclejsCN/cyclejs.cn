@@ -4,10 +4,10 @@
 
 ## 如何参与翻译
 
-0. 加 Jasin Yip 的微信：jasinyip
-1. 到 [issue](https://github.com/CyclejsCN/cyclejs.cn/issues?q=is%3Aopen+is%3Aissue+label%3A%E6%9C%AA%E8%AE%A4%E9%A2%86) 中认领翻译任务
-2. Fork 此 repo 到自己的账号下，并在相应的源文件（源文件地址会在 issue 中找到）中开始翻译。
-3. Commit 时请还上 issue 的关联（标准模板：`Translate: {document name} for #{issue id}.`）
+0. 加 Jasin Yip 的微信：jasinyip；
+1. 到 [issue](https://github.com/CyclejsCN/cyclejs.cn/issues?q=is%3Aopen+is%3Aissue+label%3A%E6%9C%AA%E8%AE%A4%E9%A2%86) 中认领翻译任务；
+2. Fork 此 repo 到自己的账号下，并在相应的源文件（源文件地址会在 issue 中找到）中开始翻译；
+3. Commit 时请还上 issue 的关联（标准模板：`Translate: {document name} for #{issue id}.`）；
 4. 翻译完成推送到自己的 repo 后（最好是非 `master` 分支），发送 [Pull Request](https://github.com/CyclejsCN/cyclejs.cn/pulls)，PR 的标题为所翻译文章的中文标题。
 
 ## 翻译必看的注意事项
@@ -20,6 +20,10 @@
   - model
   - intent
   - view
+  
+## 发现文档落后了怎么办？
+
+可以马上向这个 repo 提 [issue](https://github.com/CyclejsCN/cyclejs.cn/issues/new)，如果有兴趣的，你还可以在提 issue 后给我们发 Pull Request 进行更新！
 
 ## 贡献者名单（按参加翻译的顺序）
 
