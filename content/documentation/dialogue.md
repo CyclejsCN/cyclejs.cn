@@ -1,81 +1,81 @@
-# Dialogue abstraction
+# 对话抽象
 
-## Human-Computer Interaction
+## 人机交互
 
-Cycle.js introduces a [message passing](https://en.wikipedia.org/wiki/Message_passing) architecture to model [Human-Computer Interaction (HCI)](https://en.wikipedia.org/wiki/Human%E2%80%93computer_interaction). While most Frontend frameworks focus on Graphical User Interfaces on the DOM, Cycle.js is more holistic and suitable when you need to create any kind of Human-Computer Interaction. This chapter provides some insights into how the Cycle.js architecture was devised. HCI is a two-way process: both sides listen and speak.
+Cycle.js 对 [人机交互 (HCI)](https://en.wikipedia.org/wiki/Human%E2%80%93computer_interaction)模型介绍了一种 [消息传递](https://en.wikipedia.org/wiki/Message_passing)架构。目前大多数前端框架聚焦于 DOM 层的图形用户界面, 而当你需要建立任意形式的人机交互时，Cycle.js 是一个更全面而适宜的方案。本章将带你深入洞察 Cycle.js 架构的设计理念。 HCI 是一个双向的过程: 双方互为倾诉者与倾听者。
 
-![simple human computer interaction](img/simple-human-computer.svg)
+![简单的人机交互](img/simple-human-computer.svg)
 
-The computer usually "speaks" visual information through a screen, which the human can "listen". Through different devices, the computer can reach different human senses. The human, on the other hand, often "speaks" commands to the computer through its hand, manipulating a mouse or touching a screen.
+计算机常常会通过屏幕“说”一些人类可以“听”的可视化的信息。通过不同的设备，计算机可以到达人类不同的感观。另一方面，人类也常常通过操作鼠标或者触摸屏幕对计算机“说”一些指令。
 
-Human-Computer Interaction is a dialogue: an ongoing exchange of messages between both sides.
+人机交互是一场对话: 一次双方之间正在进行的信息交换。
 
-Both parties are able to "listen" to each other, and utter messages through their devices. In other words, we can say the human and the computer are mutually observed, or simply having a dialogue. The reason why we point out "mutual observation" is because it is related to Reactive Programming and will affect how we model this system.
+双方都能够“听到”对方,并能够通过他们的设备传达消息。换句话说，我们可以说人类和计算机是处于相互观察状态的，简而言之，正在进行一场对话。我们指出“相互观察” 的原因是它与响应式编程相关，并会影响到我们如何模型化这个系统。
 
-> ### Similarity with Haskell 1.0?
+> ### 与 Haskell 1.0 相似？
 >
-> This same dialogue concept can be found in [Haskell 1.0 Stream-based I/O](https://www.haskell.org/definition/haskell-report-1.0.ps.gz), where `type Dialogue = [Response] -> [Request]` is the model of interaction with the Operating System. `[Response]` is a stream (lazy potentially-infinite list, to be more accurate) of messages from the OS, and `[Request]` is a stream of messages to the OS.
+> 同样的对话概念可以在 [Haskell 1.0 基于数据流的 I/O](https://www.haskell.org/definition/haskell-report-1.0.ps.gz) 中找到， 其中 `type Dialogue = [Response] -> [Request]` 是和操作系统的交互模型。 `[Response]` 是来自操作系统的信息流(潜在无穷的懒列表，准确来说)， `[Request]` 是流向操作系统的信息流。
 >
-> Cycle.js' abstraction was discovered independently from Haskell's Stream I/O. We try to take some inspiration from Haskell's `Dialogue` whenever convenient, but there are a few conceptual differences. Not all problems with Haskell's `Dialogue` exist in Cycle.js or matter to Cycle.js users, and vice-versa. This is due to different execution environment assumptions and different design decisions on modelling event streams. If you want more details on this topic, the following GOTO talk is recommended, centered around the history and theory behind Cycle.js:
+> Cycle.js 的抽象是独立发现于 Haskell 的 I/O 数据流的。只要方便，我们会试着从 Haskell 的 `Dialogue` 中吸取灵感，但是它们有一些概念上的差别。 并不是所有有关 Haskell `Dialogue` 的问题都存在 Cycle.js 中或者和 Cycle.js 的用户有关联, 反之亦然。这是由于对执行环境的不同假设和对模型化事件流不同的设计决策。如果你需要这个话题的更多细节，推荐下面的跳转谈话，围绕Cycle.js 的历史和背后的理论展开：
 
 <p>
   <iframe width="100%" height="360" src="https://www.youtube.com/embed/Tkjg179M-Nc" frameborder="0" allowfullscreen></iframe>
 </p>
 
-## Senses/actuators as I/O
+## 作为 I/O 的感观/执行器 
 
-The computer is made of devices to interact with the human. *Output* devices present information to the human, and *input* devices detect actions from the human. The human possesses *actuators* and *senses*, which are connected to the computer's *input* and *output* devices, respectively.
+计算机是由和人类交互的设备组成的。*输出* 设备呈现给人们信息，*输入*设备则检测来自人类的活动。 人类有*执行器*和*感观*，分别连接着计算机的*输入*和*输出*设备。
 
 ![actuators senses I/O](img/actuators-senses-input-output.svg)
 
-The *inputs* and *outputs* of the computer suggest the computer's role in HCI can be expressed as a function. We do not yet know what `inputDevices` and `outputDevices` should be in JavaScript, but for now try to appreciate the elegance of `computer()` as a pure function.
+计算机的*输入*和*输出*表明计算机在人机交互中的角色可以被表达为一个函数。我们的确还不知道在JavaScript中什么应该是`输入设备`和`输出设备`，但从现在开始，试着欣赏 `computer()` 作为一个纯函数的优雅。
 
 ```javascript
 function computer(inputDevices) {
-  // define the behavior of `outputDevices` somehow
+  // 以某种方式定义`输出设备`的行为
   return outputDevices;
 }
 ```
 
-Refactoring and architecture can be just a matter of choosing the right composition of functions to make up `computer()`.
+重构和架构仅仅关系到选择正确的函数来组成 `computer()`。
 
-When talking about inputs, outputs, senses, and actuators, it becomes difficult to describe the difference between senses and inputs, other than the former is often associated with humans, and the latter with computers. From the computer's perspective, a microphone and its drivers are how the computer is able to *sense* auditory information. In essence, when we ignore the nature of the human body and the physics of computing machines, the human and the computer are both simply agents with senses and actuators.
+当谈及输入，输出，感知，和执行器时，感知和输入之间的差别变得难以描述，除了前者常与人类相关，而后者常与计算机有相关之外。从计算机的层面上看，麦克风和其驱动程序是它能够*感知*听觉信息的方式. 本质上，当我们忽略人体的天然性和计算机器的物理性时，人类和计算机都仅仅是具有感官和执行器的代理。
 
 ```javascript
 function computer(senses) {
-  // define the behavior of `actuators` somehow
+  // 以某种方式定义`执行器`
   return actuators;
 }
 ```
 
-The agents in this interaction are now **symmetric**: the actuator of one is connected to the senses of the other, and conversely.
+现在，在这种交互中的代理是**对称**的了: 一个代理的执行器连接着另一个的感官。反之亦然。
 
-![actuators senses](img/actuators-senses.svg)
+![执行器 感官](img/actuators-senses.svg)
 
-The diagram above is an [anthropomorphism](https://en.wikipedia.org/wiki/Anthropomorphism) of the computer. If we take the opposite approach of objectifying humans as machines, then both human and computer would be functions with inputs and outputs.
+上面的图是对计算机的一种拟人化[anthropomorphism](https://en.wikipedia.org/wiki/Anthropomorphism)。如果我们采用相反的方式，把人类物化为机器，那么人类和计算机都将成为具有输入输出功能的函数。
 
-![HCI Input Output](img/hci-inputs-outputs.svg)
+![HCI 输入 输出](img/hci-inputs-outputs.svg)
 
-Which suggests the human would be a function from its senses to its actuators.
+这表明人类将成为从感知到执行器的函数。
 
 ```javascript
 function human(senses) {
-  // define the behavior of `actuators` somehow
+  // 以某种形式定义`执行器`的行为
   return actuators;
 }
 ```
 
-> Watch Andre Staltz's talk on **What if the user was a function?** which addresses the same topics as this chapter does.
+> 观看 Andre Staltz 关于**如果用户是一个函数呢？** 的谈话，强调了和本章同样的主题。
 
 <p>
   <iframe width="100%" height="360" src="https://www.youtube.com/embed/1zj7M1LnJV4" frameborder="0" allowfullscreen></iframe>
 </p>
 
-While these abstractions seem to be natural choices for user interfaces, many questions still remain:
+虽然这些抽象似乎是用户界面自然的选择，但仍存在许多问题：
 
-- What are the types of `senses` and `actuators`?
-- When is the `human()` function called?
-- When is the `computer()` function called?
-- If the output of one is the input of the other, how do we solve the circular dependency `y = human(x)` and `x = computer(y)`?
+- `感官`和`执行器`的类型是什么?
+- 何时调用 `human()` 函数？
+- 何时调用`computer()` 函数？
+- 如果一个函数的输出是另一个函数的输入，如何解决这种循环依赖问题 `y = human(x)` 且 `x = computer(y)`？
 
-These are questions that drive the core architecture of Cycle.js, but to understand our solution, we first need to understand reactive streams: our building block for everything in Cycle.js. [Keep reading](streams.html).
+这些都是驱动着Cycle.js核心架构的问题，但为了理解我们的解决方案，我们首先需要理解反应流：在Cycle.js中为了构建一切的程序块。 [继续阅读](streams.html).
