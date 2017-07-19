@@ -10,25 +10,25 @@ Cycle.js 对[人机交互 (HCI)](https://en.wikipedia.org/wiki/Human%E2%80%93com
 
 人机交互是一场对话：一次双方之间正在进行的信息交换。
 
-双方都能够“听到”对方，并能够通过他们的设备传达消息。换句话说，我们可以说人类和计算机是处于相互观察状态的，简而言之，正在进行一场对话。我们指出“相互观察” 的原因是它与响应式编程相关，并会影响到我们如何模型化这个系统。
+双方都能够“听到”对方，并能够通过他们的设备传达消息。换句话说，我们可以说人类和计算机是处于相互观察状态的，简而言之，正在进行一场对话。我们指出“相互观察”的原因是它与响应式编程相关，并会影响到我们如何模型化这个系统。
 
 > ### 与 Haskell 1.0 相似？
 >
-> 同样的对话概念可以在 [Haskell 1.0 基于数据流的 I/O](https://www.haskell.org/definition/haskell-report-1.0.ps.gz) 中找到，其中 `type Dialogue = [Response] -> [Request]` 是和操作系统的交互模型。 `[Response]` 是来自操作系统的信息流(潜在无穷的惰性列表，准确来说)，`[Request]` 是流向操作系统的信息流。
+> 同样的对话概念可以在 [Haskell 1.0 基于流的 I/O](https://www.haskell.org/definition/haskell-report-1.0.ps.gz) 中找到，其中 `type Dialogue = [Response] -> [Request]` 是和操作系统的交互模型。 `[Response]` 是来自操作系统的信息流(惰性的潜无穷列表(lazy potentially-infinite list)，准确来说)，`[Request]` 是流向操作系统的信息流。
 >
-> Cycle.js 的抽象是独立发现于 Haskell 的 I/O 数据流的。只要方便，我们会试着从 Haskell 的  `Dialogue` 中吸取灵感，但是它们有一些概念上的差别。并不是所有有关 Haskell `Dialogue` 的问题都在 Cycle.js 中存在或会影响到 Cycle.js 的用户，反之亦然。这是由于对执行环境的不同假设和对模型化事件流的不同设计决策。如果你需要有关这个话题的更多细节，推荐下面的跳转谈话，围绕着Cycle.js 的历史和背后的理论展开：
+> Cycle.js 的抽象是独立发现于 Haskell 的 I/O 流的。只要方便，我们会试着从 Haskell 的 `Dialogue` 中吸取灵感，但是它们有一些概念上的差别。并不是所有有关 Haskell `Dialogue` 的问题都在 Cycle.js 中存在或会影响到 Cycle.js 的用户，反之亦然。这是由于对执行环境的不同假设和对模型化事件流的不同设计决策。如果你需要有关这个话题的更多细节，推荐下面的跳转谈话，围绕着 Cycle.js 的历史和背后的理论展开：
 
 <p>
   <iframe width="100%" height="360" src="https://www.youtube.com/embed/Tkjg179M-Nc" frameborder="0" allowfullscreen></iframe>
 </p>
 
-## 作为 I/O 的感知/执行器 
+## 作为 I/O 的感知/执行器(senses/actutors) 
 
-计算机是由和人类交互的设备组成的。*输出*设备呈现给人们信息，*输入*设备则检测来自人类的活动。人类有*执行器*和*感知*，分别连接着计算机的*输入*和*输出*设备。
+计算机是由和人类交互的设备组成的。**输出**设备呈现给人们信息，**输入**设备则检测来自人类的活动。人类有**执行器**和**感知**，分别连接着计算机的**输入**和**输出**设备。
 
 ![执行器 感知 I/O](img/actuators-senses-input-output.svg)
 
-计算机的*输入*和*输出*表明计算机在人机交互中的角色可以被表达为一个函数。我们的确还不知道在JavaScript中什么应该是 `inputDevices` 和 `outputDevices`，但从现在开始，试着欣赏 `computer()` 作为一个纯函数的优雅。
+计算机的**输入**和**输出**表明计算机在人机交互中的角色可以被表达为一个函数。我们的确还不知道在 JavaScript 中什么应该是 `inputDevices` 和 `outputDevices`，但从现在开始，试着欣赏 `computer()` 作为一个纯函数的优雅。
 
 ```javascript
 function computer(inputDevices) {
@@ -43,7 +43,7 @@ function computer(inputDevices) {
 
 ```javascript
 function computer(senses) {
-  // 以某种方式定义`actuators`
+  // 以某种方式定义 `actuators` 的行为
   return actuators;
 }
 ```
@@ -60,12 +60,12 @@ function computer(senses) {
 
 ```javascript
 function human(senses) {
-  // 以某种形式定义`执行器`的行为
+  // 以某种形式定义 `actuators` 的行为
   return actuators;
 }
 ```
 
-> 观看 Andre Staltz 关于**如果用户是一个函数呢？** 的谈话，强调了和本章同样的主题。
+> 观看 Andre Staltz 关于**如果把用户看作函数会怎样？** 的谈话，强调了和本章同样的主题。
 
 <p>
   <iframe width="100%" height="360" src="https://www.youtube.com/embed/1zj7M1LnJV4" frameborder="0" allowfullscreen></iframe>
@@ -73,7 +73,7 @@ function human(senses) {
 
 尽管这些抽象似乎是用户界面自然的选择，但仍存在许多问题：
 
-- `感知`和`执行器`的类型是什么？
+- `感知` (senses) 和 `执行器` (actuators) 的类型是什么？
 - 何时调用 `human()` 函数？
 - 何时调用 `computer()` 函数？
 - 如果一个函数的输出是另一个函数的输入，如何解决这种循环依赖问题 `y = human(x)` 且 `x = computer(y)`？
