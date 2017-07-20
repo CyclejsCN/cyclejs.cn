@@ -2,25 +2,25 @@
 
 ## 自动可重用
 
-UI 通常由许多可重用的元素组成：按钮，图标，滑块，划过时拥有效果的头像，智能表单域等等。在包含 Cycle.js 在内的许多前端框架中，这些元素被称为组件。但在 Cycle.js 中，组件还具有一个特性。
+UI 通常由许多可重用的元素组成：按钮，图标，滑块，划过时拥有效果的头像，智能表单域等等。包含 Cycle.js 在内的许多前端框架中，这些元素被称为组件。但在 Cycle.js 中，组件还具有一个特性。
 
 **任意 Cycle.js 应用都能够被作为一个组件重用到更大的一个 Cycle.js 应用中。**
 
-这个特性是什么意思呢？它意味着你可以构建一个应用程序，它简单到只是制作一个滑块组件。截止目前，我们知道了如何创建一个 Cycle.js `main()` 来制作一个智能滑块 widget。之后，由于 `main()` 仅只是一个函数，它从外部世界获得输入，并通过 return 来产出输出，在一个更大的 Cycle.js 应用中，我们只需要调用这个 `main()`，就能获得一个智能滑块。
+这个特性是什么意思呢？它意味着你可以构建一个应用程序，它简单到只是制作一个滑块组件，这个组件在前文中我们已经用 Cycle.js `main()` 实现了。之后，由于 `main()` 仅只是一个函数，它从外部世界获得输入，并通过 return 来产出输出，在一个更大的 Cycle.js 应用中，我们只需要调用这个 `main()`，就能获得一个智能滑块。
 
-每一个“小的 Cycle.js `main()` 函数”都被称为 **数据流组件（dataflow component）**。一个数据流组件所接收的 sources 都是其父组件提供的流（streams），该组件返回的 sinks 则会回馈到父组件。在前文中，我们已经构建了数据流组件，因为传入 `run(main, drivers)` 的 `main()` 也是一个数据流组件，它的父组件就是各个 drivers，因为正是这些 drivers 给予了该组件需要的 sources，并且拿到了组件输出的 sinks。
+每一个“小的 Cycle.js `main()` 函数”都被称为 **数据流组件（dataflow component）**。一个数据流组件所接收的 sources 都是其父组件提供的流（streams），该组件返回的 sinks 则会回馈给父组件。在前文中，我们已经构建了数据流组件，传入 `run(main, drivers)` 的 `main()` 也是一个数据流组件，它的父组件就是各个 drivers，因为正是这些 drivers 给予了该组件需要的 sources，并且拿到了组件输出的 sinks。
 
 ![dataflow component](img/dataflow-component.svg)
 
-为了更好的理解 Cycle.js 中的组件，我们干脆亲自做一个数据流组件，这个组件是一个简单的带标签的滑块。该滑块组件接收用户产生的事件作为输入，并产出一个滑块的虚 DOM 流。
+为了更好的理解 Cycle.js 中的组件，我们干脆亲自做一个数据流组件，这个组件是一个简单的带标签的滑块。该滑块组件接收用户事件作为输入，并输出一个滑块的虚 DOM 流。
 
-## 栗子：labeld slider 组件
+## 栗子：labeled slider 组件
 
-顾名思义，一个 labeld slider 组件由两个部分组成：一个标签（label）和一个滑块（slider），当滑块滑动时，标签能动态显示当前的滑块值。
+顾名思义，一个 labeled slider 组件由两个部分组成：一个标签（label）和一个滑块（slider），当滑块滑动时，标签能动态显示当前的滑块值。
 
 <a class="jsbin-embed" href="//jsbin.com/napoke/embed?output">JS Bin on jsbin.com</a>
 
-每个 labeld slider 都有下面这些属性：
+每个 labeled slider 都有下面这些属性：
 
 - 标签文本（`'Weight'`，`'Height'` 等等）
 - 单位文本（`'kg'`, `'cm'` 等等）
@@ -28,7 +28,7 @@ UI 通常由许多可重用的元素组成：按钮，图标，滑块，划过�
 - 滑块最大值
 - 初始值
 
-这些属性可以被编码为一个对象，并使用流进行包裹，再传入 `main()` 函数中作为 `source` 输入：
+这些属性可以被编码为一个对象，并使用流进行包裹 `props$`，`main()` 可以通过 `sources.props` 获得属性：
 
 ```javascript
 function main(sources) {
@@ -38,7 +38,7 @@ function main(sources) {
 }
 ```
 
-之后调用 `run` 来使用这个 main 函数：
+之后调用 `run` 来使用这个 main 函数，并传入初始属性：
 
 ```javascript
 run(main, {
@@ -49,9 +49,9 @@ run(main, {
 });
 ```
 
-需要牢记的是，即便我们只是在构建一个滑块组件，但我们需要把这个过程当做是在构建一个 main 程序。接下来，由于 `props` 是 labeled slider 从其父组件所接收的输入，所以 `main()`  的唯一父组件在这个例子中就是 `run`。 正因如此，我们需要将 `props` 配置为一个伪 driver。
+需要牢记的是，即便我们只是在构建一个滑块组件，我们仍需要把构建组件当做是在构建一个 main 程序。接下来，由于 `props` 是 labeled slider 从其父组件所接收的输入，所以 `main()`  的唯一父组件在这个例子中就是 `run`。 正因如此，我们需要将 `props` 配置为一个伪 driver。
 
-另一个 labeld slider 程序需要的输入是反映了用户页面事件的 DOM source：
+另一个 labeled slider 程序需要的输入是 DOM source：
 
 ```diff
  function main(sources) {
@@ -62,7 +62,7 @@ run(main, {
  }
 ```
 
-程序剩余部分就很简单了，和之前两章 labeled slider 代码如出一辙。只是这次我们需要接收 props 作为组件的初始值。
+程序剩余部分就很简单了，和之前两章 labeled slider 代码如出一辙，只不过我们需要处理一下传入的初始值 props：
 
 ```javascript
 function main(sources) {
@@ -108,7 +108,7 @@ function main(sources) {
 }
 ```
 
-或许你已经留意到了除了输出一个虚 DOM，我们也返回了一个 `value$` 流作为一个 sink：
+或许你已经留意到了，除了输出一个虚 DOM 流，我们也返回了一个 `value$` 流作为一个 sink：
 
 ```diff
    // ...
@@ -120,21 +120,21 @@ function main(sources) {
  }
 ```
 
-如果 labeled slider 的父组件需要使用到滑块的数值，比如使用身高或者体重数值来计算 BMI（Body Mass Index：体质指数），那么 `value$` 就显得尤为必要了。在上面我们写的程序中，`main()` 的父组件是一些个不需要用到 `value$` 的 drivers，我们也不需要一个叫做 `value` 的 driver（即不需要一个处理 `value$` 的 driver）。但是，就像接下来会看到的，如果滑块组件的父组件是另一个数据流组件，`value$` 就很重要。
+如果 labeled slider 的父组件需要使用到滑块的数值，比如使用身高或者体重数值来计算 BMI（Body Mass Index：体质指数），那么 `value$` 就显得尤为必要了。在上面我们写的程序中，`main()` 的父组件是一些不需要用到 `value$` 的 drivers，因此，我们也不需要一个叫做 `value` 的 driver（即不需要一个处理 `value$` 的 driver）。但是，就像接下来会看到的，如果滑块组件的父组件是另一个数据流组件，`value$` 就很重要。
 
 > 如何命名 sources/sinks ？
 >
 > 你应该已经发现了我们使用 `value` 而不是 `value$` 来命名 sink。这样的命名方式乍看起来似乎与我们的对流的命名惯例（即每个流都需要跟一个后缀 `$`）相悖。但事实并非如此。
 >
-> sources 和 sinks 是一个反例，因为二者扮演了某种特别的 sockets 的角色，这些 sockets 连接了组件和外部世界。sources 和 sinks 的名字仅只是作为设置或者获取流的 “键（keys）”。在 `run(main, drivers)` 语句中，这些 key 需要匹配 `drivers` 对象中的相同的 key。注意到，在 `drivers` 中，每一个由某个 key 进行索引的 driver 都不是一个流，而是函数。
+> sources 和 sinks 是一个反例，因为二者扮演了 sockets 一般的角色，这些 sockets 连接了组件和外部世界。sources 和 sinks 的名字仅只是作为设置或者获取流的 “键（keys）”。在 `run(main, drivers)` 语句中，这些 key 需要匹配 `drivers` 对象中的相同的 key。注意到，在 `drivers` 中，每一个由某个 key 进行索引的 driver 都不是一个流，而是函数。
 >
-> 这也就是为什么我们不应该使用 `DOM$` 来命名 sink，在 `drivers` 对象中，`DOM` 对应的 driver 是 DOM Driver，该 driver 是一个函数。并且，在 `main` 函数中， `sources.DOM` 是一个 DOM Source 对象（而不是流），它具有 `select()` 和 `events()` 方法。
+> 这也就是为什么我们不应该使用 `DOM$` 来命名 DOM sink，在 `drivers` 对象中，`DOM` 对应的 driver 是 DOM Driver，该 driver 是一个函数而不是一个流。并且，在 `main` 函数中，`sources.DOM` 是一个 DOM Source 对象（而不是流），它具有 `select()` 和 `events()` 方法。
 >
 > 命名 sink 的时候，使用简单的 key 来命名就行了，不需要遵从流命名的管理来添加后缀 `$`。之后，我们可以通过类似 `const props$ = sources.props` 的方式来从 sources 中获得我们需要的流。
 
 ## 使用组件
 
-现在，labeled slider 这个数据流组件已经整装待发了，我们可以在一个更大型的应用中使用它了。先让我们重命名这个组件为 `LabeledSlider`，以便于更大应用中的 `main()` 区分。
+现在，labeled slider 这个数据流组件已经整装待发了，我们可以在一个更大型的应用中使用它了。首先，我们先把组件重命名为 `LabeledSlider`，以便与组件所处应用中的 `main()` 区分。
 
 ```diff
 -function main(sources) {
@@ -163,7 +163,6 @@ function main(sources) {
   const labeledSlider = LabeledSlider(childSources);
   const childVDom$ = labeledSlider.DOM;
   const childValue$ = labeledSlider.value;
-
   // ...
 }
 ```
@@ -219,6 +218,7 @@ function main(sources) {
   const weightProps$ = xs.of({
     label: 'Weight', unit: 'kg', min: 40, value: 70, max: 150
   });
+
   const heightProps$ = xs.of({
     label: 'Height', unit: 'cm', min: 140, value: 170, max: 210
   });
@@ -258,7 +258,7 @@ function main(sources) {
 }
 ```
 
-不幸的是，你可以发现程序出现了 bug。我们滑动任意一个滑块，另一个滑块也在跟着动。我们再次进入到 `LabeledSlider` 的实现中去一窥究竟：
+不幸的是，程序出现了 bug。我们滑动任意一个滑块，另一个滑块也在跟着动。我们只有再次进入到 `LabeledSlider` 的实现中去一窥究竟：
 
 ```javascript
 function LabeledSlider(sources) {
@@ -273,16 +273,16 @@ function LabeledSlider(sources) {
 }
 ```
 
-假定我们仅仅调用该函数来获得一个体重滑块。语句 `sources.DOM.select('.slider'` **会在整个 DOM 树中选择所有 ** `.slider` 元素。而我们的体重和身高组件的 css 类都是 `.slider`，因此，当我们滑动任意滑块时，两个滑块都会动。
+假定我们仅仅调用该函数来获得一个体重滑块。语句 `sources.DOM.select('.slider')` **会在整个 DOM 树中选择所有**  `.slider` 元素。又由于我们的体重和身高组件的 css class 都是 `.slider`，因此，当我们滑动任意滑块时，两个滑块都会动。
 
-一个组件的输出不应当干扰其他组件，一个组件也不应当受到其他组件输出的干扰。为了保持 `一个组件仅只是一个 Cycle.js 应用` 这个性质，我们还需要实现下面两个性质：
+各个组件之间应当互不干扰。为了保证 `一个组件仅只是一个 Cycle.js 应用`，我们还需要实现下面两个性质：
 
-- 一个组件的 **sources**（输入） 不会受其他组件 sources 的影响，
+- 一个组件的 **sources**（输入）不会受其他组件 sources 的影响，
 - 一个组件的 **sinks**（输出）不会受到其他组件 sinks 的影响。
 
-为此，当 sources 传入组件时，当 sinks 从组件返回时，我们需要对它们进行修改。为了让各个组件的 sources 和 sinks 相互隔离，我们需要为每个组件创建各自的 scope。
+为此，当 sources 传入组件时，当 sinks 从组件返回时，这两个对象我们都会稍加更改。为了让各个组件的 sources 和 sinks 相互隔离，我们需要为每个组件创建各自的 scope。
 
-对于 DOM source 和 DOM sink，我们可以使用一个唯一标识符来作为每个虚 DOM 元素的名字空间。首先，我们会为 DOM sink 打个补丁，该流发出的 VNode 会被添加额外的类名：
+对于 DOM source 和 DOM sink，我们可以使用一个唯一标识符来作为每个虚 DOM 元素的名字空间。首先，我们会为 DOM sink 打个补丁，该流发出的 VNode 会被添加额外的 css class：
 
 ```diff
  function main(sources) {
@@ -322,7 +322,7 @@ function LabeledSlider(sources) {
 
 换言之，在任何一个 labeled slider component 中，**`sources.DOM.select()` 选中的 DOM，应当对应于该组件输出的 DOM sink**。
 
-在 `sources.DOM.select()` 中，使用与对 sink 打补丁时相同的 className 就能能满足这样的需求。
+在 `sources.DOM.select()` 中，使用与对 sink 打补丁时相同的 css class 就能能满足这样的需求。
 
 ```diff
  function main(sources) {
@@ -346,13 +346,13 @@ function LabeledSlider(sources) {
 
 > ### `select()` 做了些什么？
 >
-> 在前文中，我们多次使用了 `.select(selector).events(eventType)` 来获得 `selector` 对应元素发出的，类型为 `eventType` 的 DOM 事件流。
+> 在前文中，我们多次使用了 `.select(selector).events(eventType)` 来获得 `selector` 对应元素发出的 `eventType` 类型的 DOM 事件流。
 >
-> 在上面的代码中，`sources.DOM` 被称为 `DOM source`，该对象绑定了一些函数来帮助我们查询 DOM 以及获得事件流。我们也会直接调用 `sources.DOM.select(selector)` 而不带 `.events(eventType)`，这样，会获得一个 **新的** DOM source，我们又可以在这个新的 DOM source 上调用 `select()` 或者 `events` 方法。
+> 在上面的代码中，`sources.DOM` 被称为 `DOM source`，该对象绑定了一些函数来帮助我们查询 DOM 以及获得事件流。我们也会直接调用不带 `.events(eventType)` 的 `sources.DOM.select(selector)`，这样，语句会返回一个 **新的** DOM source，我们又可以在这个新的 DOM source 上调用 `select()` 或者 `events` 方法。
 >
-> `select('.foo').select('.bar').events('click')` 返回了一个发生在 `'.foo .bar'` 元素上的点击事件流。`select('.foo')` “收窄” DOM source 的 scope，让我们在更深一层 DOM source 上去寻找点击流。
+> `select('.foo').select('.bar').events('click')` 返回了一个发生在 `'.foo .bar'` 元素上的点击事件流。`select('.foo')` “收窄”了 DOM source 的 scope，让我们在更深一层 DOM source 上去寻找点击流。
 
-我们完成的用来隔离不同组件 sources 和 sinks 的代码看起来太过样板（boilerplate）了。理想状态下，我们想要避免通过设置 className 去手动管理各个组件的 scope：
+我们完成的用来隔离不同组件 sources 和 sinks 的代码看起来太过样板（boilerplate）了。理想状态下，我们想要避免手动设置 className 来限制组件的 scope：
 
 ```javascript
 function main(sources) {
@@ -502,7 +502,7 @@ function isolate(Component, scope) {
  }
 ```
 
-注意到创建 `WeightSlider` 组件的那行代码：
+注意到创建 `WeightSlider` 组件的代码：
 
 ```javascript
 const WeightSlider = isolate(LabeledSlider, 'weight');
@@ -527,14 +527,14 @@ const WeightSlider = isolate(LabeledSlider);
 >
 > 没有声明 scope 参数的 `isolate()` **不是** 引用透明（referential transparency）的。换言之，隐式传递 scope 的 `isolate()` 是不纯的。`WeightSlider` 和 `HeightSlider` 不是相同的组件，二者有各自唯一的 scope 参数。  
 >
-> 另一方面，如果显示传递了 scope 参数，`isolate()` 则是引用透明的，下面的代码中，`Foo` 和 `Fuu` 就是相同的：
+> 另一方面，如果显式传递了 scope 参数，`isolate()` 则是引用透明的，下面的代码中，`Foo` 和 `Fuu` 就是相同的：
 >
 > `const Foo = isolate(LabeledSlider, 'myScope');`<br />
 > `const Fuu = isolate(LabeledSlider, 'myScope');`
 >
-> 由于 Cycle.js 谨遵函数式编程技术，其大部分 API 都是引用透明的。为了方便，`isolate()` 则称为另一个例外。如果你追求任何时候任何地点都引用透明，那么就显示传递 scope 参数。如果你为了方便，并且知道 `isolate()` 是怎么工作的，就不用传递 scope 参数了
+> 由于 Cycle.js 谨遵函数式编程技术，因此，其大部分 API 都是引用透明的。但为了方便，`isolate()` 则成为了一个例外。如果你追求任何时候任何地点都引用透明，那么就显示传递 scope 参数吧。如果你为了方便，并且知道 `isolate()` 是怎么工作的，就不用传递 scope 参数了。
 
-对比下我们一开始的 BMI calculator 程序代码，现在唯一的区别只在于对子组件使用了 `isolate()` 函数：
+对比下我们一开始的 BMI 计算器代码，唯一的区别仅仅是现在通过 `isolate()` 进行了组件隔离：
 
 ```diff
  function main(sources) {
@@ -592,7 +592,7 @@ const WeightSlider = isolate(LabeledSlider);
 
 ![nested components](img/nested-components.svg)
 
-从组件视角来看，它不用关系它的父组件是什么。如果该组件被用作了 `main()`，那么其父组件就是 drivers，当然，父组件也可以是其他的数据流组件。据此，一个组件应当假定它的 sources 只含有与它自己相关的数据。因此，一个组件的 sources 和 sinks 都需要被 **隔离**。
+从组件视角来看，它不用关心它的父组件、或者父亲容器是什么。如果该组件被用作了 `main()`，那么其父组件就是 drivers，当然，父组件也可以是其他的数据流组件。据此，一个组件应当假定它的 sources 只含有与它自己相关的数据。亦即，一个组件的 sources 和 sinks 都需要被 **隔离**。
 
 使用 `isolateSource` 和 `isolateSink` 来隔离兄弟组件或者不相关组件的执行上下文。而使用 `isolate` 来创建一个隔离组件，它的内部已经调用了`isolateSource` 和 `isolateSink`。通过隔离，能防止[代码**冲突（collisions）**](https://en.wikipedia.org/wiki/Collision_%28computer_science%29)，每个组件可以工作得就像当前应用只有这一个组件一样。
 
