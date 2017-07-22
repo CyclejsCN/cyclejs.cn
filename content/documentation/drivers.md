@@ -7,11 +7,11 @@
 
 什么是 driver 以及何时使用它们？何时创建自己的 driver，以及它们是如何工作的？这都是本章将为大家解答的问题。
 
-**Driver 是监听 sink  流（它们的输入）的函数，会执行必要的副作用，然后可能会返回 source 流（它们的输出）。**
+**Driver 是监听 sink  流（它们的输入）的函数，执行必要的副作用，可能会返回 source 流（它们的输出）。**
 
-在 JavaScript 中，driver 被用来封装必要的副作用。一般来说：每当你有一个不返回任何值的 JavaScript 函数（例如 `doSomething()`），这个函数就应该被包裹在 driver 中。
+在 JavaScript 中，driver 被用来封装必要的副作用。一般来说：每当你有不返回任何值的 JavaScript 函数（例如 `doSomething()`）时，该函数就应该被包裹在 driver 中。
 
-让我们通过分析最常见的 DOM Driver 来了解 driver 是如何工作的。
+下面通过分析最常见的 DOM Driver 来了解 driver 是如何工作的。
 
 > ### 为什么取名“driver”？
 >
@@ -116,10 +116,6 @@ function WSDriver(/* 没有 sinks */) {
 
 ## 如何创建 driver
 
-
-----------
-
-
 如果你有明确的目的去创建 driver 并将其开源为一个库（如果是单行 driver 就不必了），那你只需要阅读本章节。通常，在编写 Cycle.js 应用程序时，一般都不需要创建自己的 driver。
 
 首先仔细考虑你的 driver 负责哪些 effect。它是否既包含 read effect，又包含 write effect？
@@ -136,7 +132,7 @@ Driver 函数的**输入**应该是单一的 `xstream` 流。这是应用开发�
 function myDriver(sink$, name /* 可选 */)
 ```
 
-Driver 函数的**输出**既可以是单一流，也可以是一个流的 **可查询集合**。
+Driver 函数的**输出**既可以是单一流，也可以是一个流的**可查询集合**。
 
 在单一流作为输出源的情况下，由于流发出的值具有多样性，所以得让这些值容易过滤（使用 xstream，RxJS 或者 Most.js 的 `filter()` 运算子）。设计一个可轻松过滤这些流的 API，同时牢记为 driver 函数提供了什么作为 sink 流。
 
