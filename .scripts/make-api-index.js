@@ -8,7 +8,7 @@ var mdFilename = __dirname + '/../content/api/index.md';
 var htmlFilename = __dirname + '/../api/index.html';
 var content = fs.readFileSync(mdFilename, 'utf-8');
 var outputStr = template({
-  title: 'API reference',
+  title: 'API 索引',
   pathToRoot: '../',
   content: content,
   premenu: [],
