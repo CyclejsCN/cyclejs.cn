@@ -27,6 +27,11 @@
 
 ## 贡献者名单（按参加翻译的顺序）
 
-![Jasin Yip](https://avatars1.githubusercontent.com/u/7105264?v=4&s=460)
+![Jasin Yip](https://avatars1.githubusercontent.com/u/7105264?v=4&s=100)
 
 [Jasin Yip](https://github.com/jasinyip)
+
+
+![Weiting Zhang](https://avatars3.githubusercontent.com/u/20496882?v=4&s=100)
+
+[Weiting Zhang](https://github.com/Weiting-Zhang)
