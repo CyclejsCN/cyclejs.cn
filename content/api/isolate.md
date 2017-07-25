@@ -1,14 +1,14 @@
 # Isolate
 
-A utility function to make scoped dataflow components in Cycle.js.
+在 Cycle.js 中,创建一个效用函数可以限制数据流组件的作用域。
 
 ```
 npm install @cycle/isolate
 ```
 
-See the Cycle.js [documentation on components](http://cycle.js.org/components.html#multiple-instances-of-the-same-component) for further details.
+详细内容请看 Cycle.js 相关的[组件文档](http://cycle.js.org/components.html#multiple-instances-of-the-same-component)。
 
-## Example
+## 案例
 
 ```js
 import isolate from '@cycle/isolate';
@@ -22,9 +22,9 @@ function bmiCalculator({DOM}) {
     label: 'Height', unit: 'cm', min: 140, initial: 170, max: 210
   });
 
-  // LabeledSlider is a dataflow component
-  // isolate(LabeledSlider) is an impure function: it generates
-  // a NEW dataflow component every time it is called.
+  // LabeledSlider 是一个数据流组件
+  // isolate(LabeledSlider) 不是一个纯函数：在每次调用时，它都生成一个新的数据流组件。
+  
   let WeightSlider = isolate(LabeledSlider);
   let HeightSlider = isolate(LabeledSlider);
 
