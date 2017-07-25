@@ -7,17 +7,17 @@
 
 什么是 driver 以及何时使用它们？何时创建自己的 driver，以及它们是如何工作的？这都是本章将为大家解答的问题。
 
-**Driver 是监听 sink  流（它们的输入）的函数，执行必要的副作用，可能会返回 source 流（它们的输出）。**
+**Driver 其实是一些函数，它用来监听 sink 流（输入），然后执行必要的副作用操作，最后可能会返回 source 流（输出）。**
 
-在 JavaScript 中，driver 被用来封装必要的副作用。一般来说：每当你有不返回任何值的 JavaScript 函数（例如 `doSomething()`）时，该函数就应该被包裹在 driver 中。
+在 JavaScript 中，driver 被用来封装必要的副作用操作。一般来说：每当你有不返回任何值的 JavaScript 函数（例如 `doSomething()`）时，该函数就应该被包裹在 driver 中。
 
 下面通过分析最常见的 DOM Driver 来了解 driver 是如何工作的。
 
 > ### 为什么取名“driver”？
 >
-> 在与 Cycle.js 性质相似 Haskell 1.0 Stream I/O 中，程序中的 `main` 函数和 Haskell 中的 `os` 函数之间存在一个循环交互。在操作系统中，driver 都是调用某些硬件设备的软件接口，这些硬件设备会对外界产生副作用。
+> 在与 Cycle.js 性质相似 Haskell 1.0 Stream I/O 中，程序中的 `main` 函数和 Haskell 中的 `os` 函数之间存在一个循环交互。在操作系统中，driver 是一些调用某些硬件设备的软件接口，这些硬件设备会对外界产生副作用。
 >
-> 在 Cycle.js 中，可以认为“操作系统”就是围绕应用的执行环境。大致来说，DOM，console，JavaScript 和 JS API 都扮演了 web 开发中操作系统的角色。我们需要**软件适配器**来与浏览器或者其他环境（例如 Node.js）进行交互。Cycle.js 的 driver 就是外界（包括用户以及 JavaScript 执行环境）与 Cycle.js 工具构建的应用世界之间的适配器。
+> 在 Cycle.js 中，可以认为“操作系统”就是围绕应用的执行环境。大致来说，DOM、console、JavaScript 和 JS API 都扮演了 web 开发中操作系统的角色。我们需要**软件适配器**来与浏览器或者其他环境（例如 Node.js）进行交互。Cycle.js 的 driver 就是外界（包括用户以及 JavaScript 执行环境）与 Cycle.js 工具构建的应用世界之间的适配器。
 
 ## DOM Driver
 
@@ -73,9 +73,9 @@ function main(sources) {
 
 Driver 应该始终与某些 I/O effect 联系在一起。如我们所见，虽然 DOM Driver 的主要目的是代表用户，但它有 write 和 read effect。
 
-在 JavaScript 中，没有什么能阻止你编写一个有 effects 的 `main()` 函数。一句简单的 `console.log()` 也是一个 effect。然而，让 `main()` 保持纯净能获得诸如可测试性和可预测性等好处，最好将所有的 I/O 操作都封装在 driver 中。
+在 JavaScript 中，没有什么能阻止你编写一个有 effects 的 `main()` 函数。一句简单的 `console.log()` 也是一个 effect。然而，让 `main()` 保持纯净能获得诸如可测试性和可预测性等好处，所以最好将所有的 I/O 操作都封装在 driver 中。
 
-例如，假设有一个网络请求的 driver。通过隔离网络请求的操作，应用程序里的 `main()` 函数就可以只关注与应用程序行为相关的业务逻辑，而不用关注与外部资源相关的低级别指令。这也为测试网络请求提供了一种简单的方法：你可以用一个假的网络 driver 替代实际的网络 driver。它只需要是一个函数，这个函数可以模拟网络 driver 函数，并且能够做出断言。
+例如，假设有一个网络请求的 driver。通过隔离网络请求的操作，应用程序里的 `main()` 函数就可以只关注与应用程序行为相关的业务逻辑，而不用关注与外部资源相关的底层指令。这也为测试网络请求提供了一种简单的方法：你可以用一个假的网络 driver 替代实际的网络 driver。它只需要是一个函数，该函数可以模拟网络 driver 函数，并且能够做出断言。
 
 避免创建对外界没有 effects 的 driver。尤其不要创建包含业务逻辑的 driver。这简直就是一种代码异味。
 
@@ -91,7 +91,7 @@ run(main, {
 
 大多数 driver，比如 DOM Driver，以 **sink** （为了描述 **write**）作为输入，以 **source** （为了捕获 **read**）作为输出。但是，在实际情况中我们可能也会用到只写 driver 和只读 driver。
 
-例如，上一节中那个单行的 `log` driver 就是一个只写 driver。注意，它是一个没有返回任何流的函数，它仅仅接受 sink `msg$` 作为输入。
+例如，上一节中那个单行的 `log` driver 就是一个只写 driver。注意，它是一个没有返回任何流的函数，它仅仅接受 `msg$` sink 作为输入。
 
 还有其他的 driver 仅创建 source 流来为 `main()` 发送事件，而不接受任何来自 `main()` 的 `sink`。例如一个只读的 Web Socket driver，代码如下：
 
@@ -120,13 +120,13 @@ function WSDriver(/* 没有 sinks */) {
 
 首先仔细考虑你的 driver 负责哪些 effect。它是否既包含 read effect，又包含 write effect？
 
-一旦你计划有 read/write effects，一定要考虑这些 effect 的多样性。然后创建一个能优雅覆盖常见情况的兼容性 API。
+如果设计有 read/write effects，一定要考虑这些 effect 的多样性。然后创建一个能优雅覆盖常见情况的兼容性 API。
 
-Driver 函数的**输入**应该是单一的 `xstream` 流。这是应用开发者在 `main()` 中返回 `sink` 对象时使用的实用 API。需要注意 DOM Driver 是如何使用单一 `vdom$` 流作为输入，以及 Snabbdom 中的 VNode 可以有多么复杂和富有表现力。另一方面，不要总是选择 JavaScript 对象作为 Obserable 中发送的值。仅当对象有意义时使用它们，并记住保持 API 简单而不是过度泛型。不要过度设计。
+Driver 函数的**输入**应该是单一的 `xstream` 流。这是应用开发者在 `main()` 中返回 `sink` 对象时使用的实用 API。需要注意 DOM Driver 是如何使用单一 `vdom$` 流作为输入，以及 Snabbdom 中的 VNode 可以有多么复杂和富有表现力。另一方面，不要总是选择 JavaScript 对象作为 Obserable 中发送的值。仅当对象有意义时再使用它们，并记住保持 API 简单而不是过度泛型。不要过度设计。
 
-注意，即使你使用的是 RxJS 和 `@cycle/rxjs-run`，给 driver 的 sink 始终是 `xstream` 流。你需要在 driver 的代码中使用 `Rx.Observable.from(sink$)` 将 xstream 转换以下再给 RxJS。这是因为 xstream 是在内部驱动 Cycle.js 的。 
+注意，即使你使用的是 RxJS 和 `@cycle/rxjs-run`，给 driver 的 sink 始终是 `xstream` 流。你需要在 driver 的代码中使用 `Rx.Observable.from(sink$)` 将 xstream 转换一下再给 RxJS。这是因为 xstream 是在内部驱动 Cycle.js 的。 
 
-作为 driver 函数的第二个可选参数 `name`。这是给 `run(main，drivers)` 的 `drivers` 对象中 driver 取的名字。例如，DOM Driver 通常拿到的名字是 `DOM`。一般来说，driver 不需要使用这个参数，但是它是可用的。下面是 driver 函数的预期签名：
+作为 driver 函数的第二个可选参数 `name`。这个参数是给 `run(main，drivers)` 的 `drivers` 对象中 driver 取的名字。例如，DOM Driver 通常拿到的名字是 `DOM`。一般来说，driver 不需要使用这个参数，但是它是可用的。下面是 driver 函数的预期签名：
 
 ```javascript
 function myDriver(sink$, name /* 可选 */)
@@ -278,7 +278,7 @@ run(main, {
 
 ## 可扩展性
 
-Cycle **Core** 是一个非常小的框架，Cycle **DOM** Driver 是应用程序的一个可选插件。这意味着你可以轻松地以任何其他能提供与用户交互功能的 driver 函数来替代 DOM Dirver。
+Cycle **Core** 是一个非常小的框架，Cycle **DOM** Driver 是应用程序的一个可选插件。你可以轻松地以任何其他能提供与用户交互功能的 driver 函数来替代 DOM Dirver。
 
 例如，可以 fork 然后修改 DOM Driver 的源代码来适应你的需求，然后在 Cycle.js 应用中使用。可以创建一个与 socket 交互的 driver。执行网络请求的 driver。适用于 Node.js 的 driver。针对其他 UI 树（例如 `<canvas>` 或更底层的 mobile UI）的 driver。
 
