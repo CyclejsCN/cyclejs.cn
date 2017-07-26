@@ -5,12 +5,12 @@ var ejs = require('ejs');
 var template = ejs.compile(fs.readFileSync(__dirname + '/template.html', 'utf-8'));
 
 var chapters = [
-  {id: 'getting-started', title: 'Getting started'},
-  {id: 'dialogue', title: 'Dialogue abstraction'},
-  {id: 'streams', title: 'Streams'},
-  {id: 'basic-examples', title: 'Basic examples'},
-  {id: 'model-view-intent', title: 'Model-View-Intent'},
-  {id: 'components', title: 'Components'},
+  {id: 'getting-started', title: '起步'},
+  {id: 'dialogue', title: '对话抽象'},
+  {id: 'streams', title: '流'},
+  {id: 'basic-examples', title: '基本例子'},
+  {id: 'model-view-intent', title: 'model-view-intent'},
+  {id: 'components', title: '组件'},
   {id: 'drivers', title: 'Drivers'},
 ]
 

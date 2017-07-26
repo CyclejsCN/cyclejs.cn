@@ -37,11 +37,17 @@
 
 [Jasin Yip](https://github.com/jasinyip)
 
-
 ![Weiting Zhang](https://avatars3.githubusercontent.com/u/20496882?v=4&s=100)
 
 [Weiting Zhang](https://github.com/Weiting-Zhang)
 
+![yoyoyohamapi](https://avatars1.githubusercontent.com/u/8338436?v=4&s=100)
+
+[yoyoyohamapi](https://github.com/yoyoyohamapi)
+
+![zhouweicsu](https://avatars0.githubusercontent.com/u/2416357?v=4&s=100)
+
+[zhouweicsu](https://github.com/zhouweicsu)
 
 ![Jeason](https://avatars3.githubusercontent.com/u/17971291?v=4&s=100)
 
