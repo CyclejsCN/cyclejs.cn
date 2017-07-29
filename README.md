@@ -4,7 +4,6 @@
 
 ## 如何参与翻译？
 
-0. 加 Jasin Yip 的微信：jasinyip；
 1. 到 [issue](https://github.com/CyclejsCN/cyclejs.cn/issues?q=is%3Aopen+is%3Aissue+label%3A%E6%9C%AA%E8%AE%A4%E9%A2%86) 中认领翻译任务；
 2. Fork 此 repo 到自己的账号下，并在相应的源文件（源文件地址会在 issue 中找到）中开始翻译；
 3. Commit 时请还上 issue 的关联（标准模板：`Translate: {document name} for #{issue id}.`）；
@@ -12,7 +11,6 @@
 
 ## 如何参与校对？
 
-0. 加 Jasin Yip 的微信：jasinyip；
 1. 到 [issue](https://github.com/CyclejsCN/cyclejs.cn/issues?q=is%3Aissue+is%3Aopen+label%3A%E5%BE%85%E8%AE%A4%E9%A2%86%E6%A0%A1%E5%AF%B9) 里认领校对任务；
 2. 到对应的 [Pull Request](https://github.com/CyclejsCN/cyclejs.cn/pulls) 中像 Code Review 一样对翻译的内容进行评论。
 
