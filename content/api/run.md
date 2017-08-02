@@ -1,6 +1,6 @@
 # 使用 xstream 时的 Run() 
 
-Cycle.js 应用中用 xstream 实现的 `run(main, drivers)` 函数。
+使用 xstream 开发 Cycle.js 应用时调用的 `run(main, drivers)` 函数。
 
 ```
 npm install @cycle/run xstream
@@ -35,8 +35,8 @@ dispose();
 **参数：**
 
 ---
-- `main: Function` 一个函数，输入是 `sources`，输出是 `sinks`。
-- `drivers: Object` 一个对象，键名是 driver 名称，值是 driver 函数。
+- `main: Function` 输入是 `sources`，输出是 `sinks` 的函数。
+- `drivers: Object` 使用 driver 名称作为键，使用 driver 函数作为值的对象。
 
 
 **返回值：**
@@ -61,8 +61,8 @@ dispose();
 **参数：**
 
 ---
-- `main: Function` 一个函数，输入是 `sources`，输出是 `sinks`。
-- `drivers: Object` 一个对象，键名是 driver 名称，值是 driver 函数。
+- `main: Function` 输入是 `sources`，输出是 `sinks` 的函数。
+- `drivers: Object` 使用 driver 名称作为键，使用 driver 函数作为值的对象。
 
 **返回值：**
 
