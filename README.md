@@ -59,4 +59,10 @@
 
 [linxiangjun](https://github.com/linxiangjun)
 
+![panricas](https://avatars3.githubusercontent.com/u/20414868?v=4&s=100)
 
+[panricas](https://github.com/panricas)
+
+![jasonxia23](https://avatars0.githubusercontent.com/u/15098719?v=4&s=100)
+
+[jasonxia23](https://github.com/jasonxia23)
