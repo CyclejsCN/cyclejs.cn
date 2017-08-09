@@ -79,7 +79,7 @@ const childSinks = isolate(Child, {DOM: 'foo', '*': 'bar'})(sources);
 // 使用一些任意字符串作为 HTTP 和其他渠道的 isolation scope
 const childSinks = isolate(Child, {DOM: 'foo'})(sources);
 ```
-如果 `scope` 参数根本没有提供，就会自动生成一个新的 scope。这就意味着尽管** `isolate(component, scope)` 是纯函数**（即透明的），然而  **`isolate(component)` 不是纯函数**（即不透明的）。两种对 `isolate(Foo, bar)` 调用都会生成一样的组件，但是两种方式调用 `isolate(Foo)` 会生成两个不同的组件。
+如果 `scope` 参数根本没有提供，就会自动生成一个新的 scope。这就意味着尽管 **`isolate(component, scope)` 是纯函数**（即透明的），然而  **`isolate(component)` 不是纯函数**（即不透明的）。两种对 `isolate(Foo, bar)` 调用都会生成一样的组件，但是两种方式调用 `isolate(Foo)` 会生成两个不同的组件。
 
 注意到 `isolateSource()` 和 `isolateSink()` 两个方法都有 `source` 的静态成员。这是因为当应用程序产生 `sink` 时，driver 生成了 `source`。并且 `isolateSource()` 和 `isolateSink()` 函数都是由 driver 执行的。
 
