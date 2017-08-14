@@ -70,7 +70,7 @@ function main(source) {
       // 注意 httpResponse$$ 触发 httpResponse$。
 
       // response stream 包含一个特殊的属性：
-      // `request`, 与触发 sink stream 时的 `request` 对象相同。
+      // `request`， 与触发 sink stream 时的 `request` 对象相同。
       // 可以用来过滤与特定 request 对应的 httpResponse$。
       console.log(httpResponse$.request);
     },
@@ -79,7 +79,7 @@ function main(source) {
   });
 
   let httpResponse$ = httpResponse$$.flatten(); // 将 metastream 压平
-  // 为什么要在 API 中提供 flatten 函数？ Cycle.js 要求用户必须选择使用哪种并行策略。
+  // 为什么要在 API 中提供 flatten 函数？ Cycle.js 要求用户必须在不同的并行策略之间做出选择。
   // xstream 常用的 `flatten()` 有并发数为 1 的限制，一旦针对同一资源的请求发生时，前面的相同的请求将会被取消。
   // 如果想全部并行处理（没有取消的情况），请使用 `flattenConcurrently()`。
 
@@ -96,7 +96,7 @@ function main(source) {
     complete: () => {},
   });
 
-  // 这个 request stream 周期性的产生对象，对象有一个 `url` 属性，值为 `http://localhost:8080/ping`。
+  // 这个 request stream 周期性地产生对象，对象有一个 `url` 属性，值为 `http://localhost:8080/ping`。
   let request$ = xs.periodic(1000)
     .mapTo({ url: 'http://localhost:8080/ping', method: 'GET' });
 
@@ -118,7 +118,7 @@ sources.HTTP
   ).flatten()
 ```
 
-更多的信息可以查看[xstream 关于 replaceError 的文档 ](https://github.com/staltz/xstream#replaceError) 或者 [RxJS catch 相关的文档](https://github.com/Reactive-Extensions/RxJS/blob/master/doc/api/core/operators/catch.md)
+更多的信息可以查看 [xstream 关于 replaceError 的文档 ](https://github.com/staltz/xstream#replaceError) 或者 [RxJS catch 相关的文档](https://github.com/Reactive-Extensions/RxJS/blob/master/doc/api/core/operators/catch.md)
 
 ## 其他信息
 
@@ -138,9 +138,9 @@ Cycle HTTP 通过 `@cycle/isolate` 支持组件的隔离。下面讲一讲给 `i
 
 父子组件运行在同一个上下文当中，在子组件中调用类似 `HTTPSource.select()` 方法时可以获取到与父组件相关的 response stream。这意味着，子组件可以看到非自己产生的 reponse。
 
-**scope 为字符串：siblings isolation（子组件间隔离）**
+**scope 为字符串：siblings isolation（兄弟组件隔离）**
 
-在父组件中调用 `HTTPSource.select()` 可以获取到其子组件的 HTTP response。但是，使用  "siblings isolation" 隔离策略的子组件无法访问到其他采用同样策略 "siblings isolation" 子组件的 HTTP response。
+在父组件中调用 `HTTPSource.select()` 可以获取到其子组件的 HTTP response。但是，使用“siblings isolation”隔离策略的子组件无法访问到其他采用同样策略“siblings isolation”子组件的 HTTP response。
 
 # API
 
@@ -153,27 +153,27 @@ HTTP Driver 工厂函数。
 
 **Request**。request stream 输出字符串或者对象。如果输出的是字符串，就是代表一个 URL 地址，指向一个远程可通过 HTTP 请求的资源。如果输出的对象，这个对象等价于 superagent 请求的配置对象。即对象结构与 supergent request API 的配置类似。`request` 对象的属性包括：
 
-- `url` *(String)*：远程资源路径。**必选**；
-- `method` *(String)*：request 的 HTTP 方法（GET、POST、PUT 等等）；
-- `category` *(String)*：可选，自定义 key。可以用在 HTTP Source 中，比如要查询相关的  response 时：`sources.http.select(category)`；
-- `query` *(Object)*：对象，发送 `GET` 或者 `POST` 时的 payload；
-- `send` *(Object)*：对象，发送 `POST` 时的 payload；
-- `headers` *(Object)*：对象，设定 HTTP 请求头；
-- `accept` *(String)*：设置 HTTP 请求头 Accept 值；
-- `type` *(String)*：设置请求头 Content-Type 值，简写；
-- `user` *(String)*：用于登录验证的用户名；
-- `password` *(String)*：用于登录验证的密码；
-- `field` *(Object)*：对象，Form 字段对应的 key/value 值；
-- `progress` *(Boolean)*：配置是否跟踪并在 response Observable 上触发 progress 事件；
-- `attach` *(Array)*：对象数组，每个对象包含 `name`、`path`和`filename` 属性，代表一个上传资源；
-- `withCredentials` *(Boolean)*：开启跨域请求携带目标域的 cookie 信息；
-- `agent` *(Object)*：对象，指定 SSL 证书认证所需的 `cert` 和 `key`；
-- `redirects` *(Number)*：可 follow 的跳转次数；
-- `lazy` *(Boolean)*：是否启用延迟请求模式；在 HTTP Source 上对应的 response stream 被订阅时才发出请求。默认值为 `false`：请求尽早发出，无论 response 是否会被应用使用；
-- `responseType` *(String)*：设置 XHR 的 responseType。
+- `url` **（String）**：远程资源路径。**必选**；
+- `method` **（String）**：request 的 HTTP 方法（GET、POST、PUT 等等）；
+- `category` **（String）**：可选，自定义 key。可以用在 HTTP Source 中，比如要查询相关的 response 时：`sources.http.select(category)`；
+- `query` **（Object）**：对象，发送 `GET` 或者 `POST` 时的 payload；
+- `send` **（Object）**：对象，发送 `POST` 时的 payload；
+- `headers` **（Object）**：对象，设定 HTTP 请求头；
+- `accept` **（String）**：设置 HTTP 请求头 Accept 值；
+- `type` **（String）**：设置请求头 Content-Type 值，简写；
+- `user` **（String）**：用于登录验证的用户名；
+- `password` **（String）**：用于登录验证的密码；
+- `field` **（Object）**：对象，Form 字段对应的 key/value 值；
+- `progress` **（Boolean）**：配置是否跟踪并在 response Observable 上触发 progress 事件；
+- `attach` **（Array）**：对象数组，每个对象包含 `name`、`path`和`filename` 属性，代表一个上传资源；
+- `withCredentials` **（Boolean）**：开启跨域请求携带目标域的 cookie 信息；
+- `agent` **（Object）**：对象，指定 SSL 证书认证所需的 `cert` 和 `key`；
+- `redirects` **（Number）**：允许重定向的次数；
+- `lazy` **（Boolean）**：是否启用延迟请求模式；在 HTTP Source 上对应的 response stream 被订阅时才发出请求。默认值为 `false`：无论 response 是否会被应用使用，请求都会尽早发出；
+- `responseType` **（String）**：设置 XHR 的 responseType。
 
-**Responses**：metastream 就是输出 stream 的 stream。HTTP Source 管理 response 的 metastream。这些 response 的 stream 自身有一个 `request` 属性值，指明来自 driver 输入的哪个 request 产生了自己。HTTP Source 自己本身并不是 stream，但它有两个方法，`filter()` 和 `select()`，所以可以调用 `sources.HTTP.filter(request => request.url === X)` ，过滤出满足条件的 response stream，获得一个新的 HTTP Source；还可以调用  `sources.HTTP.select(category)`，获取与 `category` 键值相匹配的 response 的 metastream。 甚至，还可以直接不传参调用 `httpSource.select()` ，获得全部的 metastream。在消费 metastream 前必须将其展平（flatten），在 response stream 中将会受到来由 superagent 产生的响应对象。
+**Responses**：metastream 就是输出 stream 的 stream。HTTP Source 管理 response 的 metastream。这些 response 的 stream 自身有一个 `request` 属性值，指明来自 driver 输入的哪个 request 产生了自己。HTTP Source 自己本身并不是 stream，但它有两个方法，`filter()` 和 `select()`，所以可以调用 `sources.HTTP.filter(request => request.url === X)`，过滤出满足条件的 response stream，获得一个新的 HTTP Source；还可以调用  `sources.HTTP.select(category)`，获取与 `category` 键值相匹配的 response 的 metastream。甚至，还可以直接不传参调用`httpSource.select()`，获得全部的 metastream。在消费 metastream 前必须将其压平（flatten），在 response stream 中将会收到来由 superagent 产生的响应对象。
 
 #### 返回：
 
-*(Function)* HTTP Driver 函数
+**（Function）** HTTP Driver 函数
