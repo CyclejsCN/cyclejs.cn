@@ -79,7 +79,7 @@ function main(source) {
   });
 
   let httpResponse$ = httpResponse$$.flatten(); // 将 metastream 压平
-  // 为什么要在 API 中提供 flatten 函数？ Cycle.js 要求用户必须在不同的并行策略之间做出选择。
+  // 为什么要在 API 中提供 flatten 函数？Cycle.js 要求用户必须在不同的并行策略之间做出选择。
   // xstream 常用的 `flatten()` 有并发数为 1 的限制，一旦针对同一资源的请求发生时，前面的相同的请求将会被取消。
   // 如果想全部并行处理（没有取消的情况），请使用 `flattenConcurrently()`。
 
