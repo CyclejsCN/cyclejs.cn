@@ -4,7 +4,8 @@
   <meta charset='utf-8'>
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
   <meta name="viewport" content="width=device-width">
-  <title>Cycle.js - API reference (rxjs-run)</title>
+  <meta name="keyword" content="cycle.js,中文,cyclejs 中文,javascript,functional,函数式,reactive,响应式">
+  <title>Cycle.js - API 索引</title>
 
   <!-- Flatdoc -->
   <script src='../support/vendor/jquery.js'></script>
@@ -24,22 +25,22 @@
   <link href='../support/vendor/highlight-github-gist.css' rel='stylesheet'>
 
   <!-- Meta -->
-  <meta content="Cycle.js - API reference (rxjs-run)" property="og:title">
-  <meta content="A functional and reactive JavaScript framework for predictable code" name="description">
+  <meta content="Cycle.js - API 索引" property="og:title">
+  <meta content="一个函数式和响应式的 JavaScript 框架，用来编写前瞻性代码。" name="description">
 
   <!-- Content -->
   <script id="markdown" type="text/markdown" src="index.html">
-# Run() for RxJS
+# 用于 RxJS 的 Run() 函数
 
-Cycle.js `run(main, drivers)` function for applications written with RxJS version **5**.
+针对选择使用 RxJS **5** 版本的 Cycle.js 应用，所提供的 `run(main, drivers)` 函数。
 
 ```
 npm install @cycle/rxjs-run rxjs
 ```
 
-**Note: `rxjs` package is required too.**
+**注意：不要忘记安装 `rxjs` 包**
 
-## Basic usage
+## 基本用法
 
 ```js
 import run from '@cycle/rxjs-run'
@@ -49,12 +50,12 @@ run(main, drivers)
 
 # API
 
-## <a id="run"></a> `run(main, drivers)`
+## `run(main, drivers)`
 
-Takes a `main` function and circularly connects it to the given collection
-of driver functions.
+接受一个 `main` 函数，和一组 driver 函数，并将它们循环连接起来。
 
-**Example:**
+#### 例子：
+
 ```js
 import run from '@cycle/rxjs-run';
 const dispose = run(main, drivers);
@@ -62,32 +63,23 @@ const dispose = run(main, drivers);
 dispose();
 ```
 
-The `main` function expects a collection of "source" Observables (returned
-from drivers) as input, and should return a collection of "sink" Observables
-(to be given to drivers). A "collection of Observables" is a JavaScript
-object where keys match the driver names registered by the `drivers` object,
-and values are the Observables. Refer to the documentation of each driver to
-see more details on what types of sources it outputs and sinks it receives.
+`main` 函数的参数是一组 source Observables 的集合（由各个 driver 提供），返回值则是一组 sink Observables 的集合（提供给需要的 driver）。所谓的“一组 Observables 的集合”("A collection of Observables")，具体的形式是一个 Javascript object，当中每个属性与一个 driver 相对应，其属性名与这个 driver 在 `drivers` 对象中的属性名相同，属性值则是这个 driver 输入或者输出的 Observables。在各个 driver 的文档中，可以查询到这个 driver 的所输出的 sources 和接收的 sinks 的具体细节。
 
-#### Arguments:
+#### 参数：
 
-- `main: Function` a function that takes `sources` as input and outputs a collection of `sinks` Observables.
-- `drivers: Object` an object where keys are driver names and values are driver functions.
+- `main: Function` 一个函数，用于接受 `sources`，并返回一组 `sinks` Observables。
+- `drivers: Object` 一个对象，其属性名是这个 driver 的名字，属性值则是具体的 driver 函数。
 
-#### Returns:
+#### 返回：
 
-*(Function)* a dispose function, used to terminate the execution of the Cycle.js program, cleaning up resources used.
+- *（Function）* 一个销毁函数，可用于结束正在运行的 Cycle.js 程序，并清理和释放资源。
 
-## <a id="setup"></a> `setup(main, drivers)`
+## `setup(main, drivers)`
 
-A function that prepares the Cycle application to be executed. Takes a `main`
-function and prepares to circularly connects it to the given collection of
-driver functions. As an output, `setup()` returns an object with three
-properties: `sources`, `sinks` and `run`. Only when `run()` is called will
-the application actually execute. Refer to the documentation of `run()` for
-more details.
+一个初始化函数，用于完成 Cycle.js 程序在执行前所需的准备工作。该函数接受一个 `main` 函数和一组 driver 函数作为参数，返回值为一个对象，包含 3 个属性：`sources`，`sinks` 和 `run`。当 `run` 属性包含的函数被调用时，会启动 Cycle.js 程序运行。可以查看 `run` 函数的文档，其中包含有更多的细节。
 
-**Example:**
+#### 例子：
+
 ```js
 import {setup} from '@cycle/rxjs-run';
 const {sources, sinks, run} = setup(main, drivers);
@@ -97,17 +89,14 @@ const dispose = run(); // Executes the application
 dispose();
 ```
 
-#### Arguments:
+#### 参数：
 
-- `main: Function` a function that takes `sources` as input and outputs a collection of `sinks` Observables.
-- `drivers: Object` an object where keys are driver names and values are driver functions.
+- `main: Function` 一个函数，用于接受 `sources`，并返回一组 `sinks` Observables。
+- `drivers: Object` 一个对象，其属性名是 driver 名，属性值是 driver 函数。
 
-#### Returns:
+#### 返回：
 
-*(Object)* an object with three properties: `sources`, `sinks` and `run`. `sources` is the collection of driver sources, `sinks` is the
-collection of driver sinks, these can be used for debugging or testing. `run`
-is the function that once called will execute the application.
-
+- *(Object)* 一个包含 3 个属性的对象：`sources`，`sinks` 和 `run`。`sources` 是由各个 driver sources 所组成的集合，sinks 是由各个 driver sinks 所组成的集合，这两个属性可以用于调试或者测试。`run` 则是一个函数，用于启动 Cycle.js 程序的运行。
 
   </script>
 
@@ -132,8 +121,8 @@ is the function that once called will execute the application.
     <div class='left'>
       <h1><a href="/"><img class="logo" src="../img/cyclejs_logo.svg" >Cycle.js</a></h1>
       <ul>
-        <li><a href='../getting-started.html'>Documentation</a></li>
-        <li><a href='../api/index.html'>API reference</a></li>
+        <li><a href='../getting-started.html'>中文文档</a></li>
+        <li><a href='../api/index.html'>API 索引</a></li>
         <li><a href='../releases.html'>Releases</a></li>
         <li><a href='https://github.com/cyclejs/cyclejs'>GitHub</a></li>
       </ul>
@@ -151,10 +140,38 @@ is the function that once called will execute the application.
 
         <div role='flatdoc-menu'></div>
 
+        <ul>
+  
+            <li><a href="../api/run.html" class="level-1 out-link">Cycle Run</a></li>
+  
+            <li><a href="../api/rxjs-run.html" class="level-1 out-link">Cycle RxJS Run</a></li>
+  
+            <li><a href="../api/most-run.html" class="level-1 out-link">Cycle Most Run</a></li>
+  
+            <li><a href="../api/dom.html" class="level-1 out-link">Cycle DOM</a></li>
+  
+            <li><a href="../api/html.html" class="level-1 out-link">Cycle HTML</a></li>
+  
+            <li><a href="../api/http.html" class="level-1 out-link">Cycle HTTP</a></li>
+  
+            <li><a href="../api/history.html" class="level-1 out-link">Cycle History</a></li>
+  
+            <li><a href="../api/isolate.html" class="level-1 out-link">Cycle Isolate</a></li>
+  
+            <li><a href="../api/jsonp.html" class="level-1 out-link">Cycle JSONP</a></li>
+  
+        </ul>
+
+
       </div>
     </div>
     <div role='flatdoc-content' class='content'></div>
 
+    <footer style="text-align: center">
+      <a href="http://www.miitbeian.gov.cn/" target="_blank">
+        粤ICP备14056081号-3
+      </a>
+    </footer>
   </div>
 
 

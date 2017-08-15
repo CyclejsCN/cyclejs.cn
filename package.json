@@ -5,10 +5,11 @@
     "index": "node .scripts/make-index.js",
     "documentation": "node .scripts/make-documentation.js",
     "releases": "node .scripts/make-releases.js",
-    "api": "node .scripts/make-api-index.js && cd .. && ./.scripts/yarn-x-for-all-packages.sh run docs && cd docs",
+    "api": "node .scripts/make-api-index.js",
     "all": "yarn run index && yarn run documentation && yarn run releases && yarn run api"
   },
   "devDependencies": {
-    "ejs": "^2.5.6"
+    "ejs": "^2.5.6",
+    "markdox": "^0.1.10"
   }
 }

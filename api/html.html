@@ -4,7 +4,8 @@
   <meta charset='utf-8'>
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
   <meta name="viewport" content="width=device-width">
-  <title>Cycle.js - API reference (html)</title>
+  <meta name="keyword" content="cycle.js,中文,cyclejs 中文,javascript,functional,函数式,reactive,响应式">
+  <title>Cycle.js - API 索引</title>
 
   <!-- Flatdoc -->
   <script src='../support/vendor/jquery.js'></script>
@@ -24,14 +25,14 @@
   <link href='../support/vendor/highlight-github-gist.css' rel='stylesheet'>
 
   <!-- Meta -->
-  <meta content="Cycle.js - API reference (html)" property="og:title">
-  <meta content="A functional and reactive JavaScript framework for predictable code" name="description">
+  <meta content="Cycle.js - API 索引" property="og:title">
+  <meta content="一个函数式和响应式的 JavaScript 框架，用来编写前瞻性代码。" name="description">
 
   <!-- Content -->
   <script id="markdown" type="text/markdown" src="index.html">
 # Cycle HTML
 
-A Cycle.js driver to render virtual DOM streams as HTML. This is based on the DOM driver and [snabbdom](https://github.com/paldepind/snabbdom/), and is intended for server-side rendered HTML that mirrors what the DOM driver would render client-side.
+Cycle.js driver 用于将虚拟 DOM 流渲染为 HTML 。它基于 DOM driver 和 [snabbdom](https://github.com/paldepind/snabbdom/)，其适用于在服务器端渲染 HTML，与此相对，DOM driver 将在客户端进行渲染。
 
 ```
 npm install @cycle/html
@@ -39,56 +40,30 @@ npm install @cycle/html
 
 # API
 
+> makeHTMLDriver(effect, options)
 
-## <a id="makeHTMLDriver"></a> `makeHTMLDriver(effect, options)`
+HTML driver 函数的工厂(factory)。
 
-A factory for the HTML driver function.
+参数为回调函数 `effect` 和 `options` 对象。driver 的输入为一个虚拟 DOM 对象流，也就是 Snabbdom 中的 "VNode" 对象，输出为一个 DOMSource：方法 select() 和 events() 查询到的 Observables 集合。
 
-Takes an `effect` callback function and an `options` object as arguments. The
-input to this driver is a stream of virtual DOM objects, or in other words,
-Snabbdom "VNode" objects. The output of this driver is a "DOMSource": a
-collection of Observables queried with the methods `select()` and `events()`.
+HTML Driver 是对 DOM Driver 的完善。不同于在 DOM 上直接生成 elements，它会生成 HTML 字符串，并对这些字符串产生副作用，回调函数 `effect` 则是用于描述或自定义这些副作用。所以说，如果你希望将 HTML Driver 用于服务端渲染后发送到客户端（这是 HTML Driver 的典型用法），你需要传递一些类似于 `html => response.send(html)` 的函数作为 `effect` 参数。由此，HTML Driver 就能获知应对其刚刚渲染产生的 HTML 字符串施以何种副作用。
 
-The HTML Driver is supplementary to the DOM Driver. Instead of producing
-elements on the DOM, it generates HTML as strings and does a side effect on
-those HTML strings. That side effect is described by the `effect` callback
-function. So, if you want to use the HTML Driver on the server-side to render
-your application as HTML and send as a response (which is the typical use
-case for the HTML Driver), you need to pass something like the
-`html => response.send(html)` function as the `effect` argument. This way,
-the driver knows what side effect to cause based on the HTML string it just
-rendered.
+HTML Driver 仅对回调函数 `effect` 中的副作用有效，它可以被认为是一个 sink-only driver 。但是，为了在服务端渲染时能完美代替 DOM Driver。HTML Driver 返回一个类似 DOMSource 的源对象。这将有助于我们复用为 DOM Driver 编写的应用程序。由于在服务端没有用户事件，所以在你查询时虚拟的 DOMSource 返回空数据流。
 
-The HTML driver is useful only for that side effect in the `effect` callback.
-It can be considered a sink-only driver. However, in order to serve as a
-transparent replacement to the DOM Driver when rendering from the server, the
-HTML driver returns a source object that behaves just like the DOMSource.
-This helps reuse the same application that is written for the DOM Driver.
-This fake DOMSource returns empty streams when you query it, because there
-are no user events on the server.
+`DOMSource.select(selector)` 返回一个新的 DOMSource ，其作用域限于与给定的 CSS 选择器匹配的元素。
 
-`DOMSource.select(selector)` returns a new DOMSource with scope restricted to
-the element(s) that matches the CSS `selector` given.
+`DOMSource.events(eventType, options)` 返回空数据流。如果你使用 `@cycle/xstream-run` 搭配 HTML Driver 来启动你的应用，它返回的是一个 **xstream** 数据流；或者使用 `@cycle/rxjs-run` 启动应用，那你将得到一个 RxJS Observable。
 
-`DOMSource.events(eventType, options)` returns an empty stream. The returned
-stream is an *xstream* Stream if you use `@cycle/xstream-run` to run your app
-with this driver, or it is an RxJS Observable if you use `@cycle/rxjs-run`,
-and so forth.
+`DOMSource.elements()` 返回依据你的sink接口虚拟 DOM 流渲染的 HTML 字符串流。
 
-`DOMSource.elements()` returns the stream of HTML string rendered from your
-sink virtual DOM stream.
+#### 参数:
 
-#### Arguments:
+- `effect: Function` 回调函数，它接收一段已渲染的 HTML 串作为输入，并对其产生一些副作用，不返回任何值。
+- `options: HTMLDriverOptions` 对象，含有一个可选属性：`transposition: boolean` ，用以启用/禁用虚拟 DOM 树内部数据流的转换。
 
-- `effect: Function` a callback function that takes a string of rendered HTML as input and should run a side effect, returning nothing.
-- `options: HTMLDriverOptions` an object with one optional property: `transposition: boolean` enables/disables transposition of inner streams in
-the virtual DOM tree.
+#### 返回值:
 
-#### Returns:
-
-*(Function)* the HTML driver function. The function expects a stream of VNode as input, and outputs the DOMSource object.
-
-
+**(Function)** HTML driver 函数，该函数接收 VNode 流作为输入，并输出 DOMSource 对象。
   </script>
 
   <!-- Initializer -->
@@ -112,8 +87,8 @@ the virtual DOM tree.
     <div class='left'>
       <h1><a href="/"><img class="logo" src="../img/cyclejs_logo.svg" >Cycle.js</a></h1>
       <ul>
-        <li><a href='../getting-started.html'>Documentation</a></li>
-        <li><a href='../api/index.html'>API reference</a></li>
+        <li><a href='../getting-started.html'>中文文档</a></li>
+        <li><a href='../api/index.html'>API 索引</a></li>
         <li><a href='../releases.html'>Releases</a></li>
         <li><a href='https://github.com/cyclejs/cyclejs'>GitHub</a></li>
       </ul>
@@ -131,10 +106,38 @@ the virtual DOM tree.
 
         <div role='flatdoc-menu'></div>
 
+        <ul>
+  
+            <li><a href="../api/run.html" class="level-1 out-link">Cycle Run</a></li>
+  
+            <li><a href="../api/rxjs-run.html" class="level-1 out-link">Cycle RxJS Run</a></li>
+  
+            <li><a href="../api/most-run.html" class="level-1 out-link">Cycle Most Run</a></li>
+  
+            <li><a href="../api/dom.html" class="level-1 out-link">Cycle DOM</a></li>
+  
+            <li><a href="../api/html.html" class="level-1 out-link">Cycle HTML</a></li>
+  
+            <li><a href="../api/http.html" class="level-1 out-link">Cycle HTTP</a></li>
+  
+            <li><a href="../api/history.html" class="level-1 out-link">Cycle History</a></li>
+  
+            <li><a href="../api/isolate.html" class="level-1 out-link">Cycle Isolate</a></li>
+  
+            <li><a href="../api/jsonp.html" class="level-1 out-link">Cycle JSONP</a></li>
+  
+        </ul>
+
+
       </div>
     </div>
     <div role='flatdoc-content' class='content'></div>
 
+    <footer style="text-align: center">
+      <a href="http://www.miitbeian.gov.cn/" target="_blank">
+        粤ICP备14056081号-3
+      </a>
+    </footer>
   </div>
 
 
