@@ -1,14 +1,14 @@
 # Model-View-Intent
 
-## Split main into parts
+## 主函数的拆分
 
-We can write our entire Cycle.js program inside the `main()` function, like we did in the [previous chapter](basic-examples.html#basic-examples-body-mass-index-calculator). However, any programmer knows this isn't a good idea. Once `main()` grows too large, it becomes hard to maintain.
+我们可以将整个 Cycle.js 程序写在 `main()` 函数中，就像我们在[前一章](basic-examples.html#basic-examples-body-mass-index-calculator)中所做的那样。然而，任何程序员都知道这并不是一个好主意。一旦 `main()` 函数变得冗长，它将难以维护。
 
-**MVI is a simple pattern to refactor the main() function into three parts: Intent (to listen to the user), Model (to process information), and View (to output back to the user).**
+**MVI 是一种简单的模式来将 main() 函数重构为三个部分：Intent（监听用户）、Model（处理信息）、和 View（返回输出）**
 
 ![main equal MVI](img/main-eq-mvi.svg)
 
-Let's see how we can refactor the `main()` function we wrote for calculating BMI:
+让我们看看如何重构一个计算 BMI 的 `main()` 函数：
 
 ```javascript
 import xs from 'xstream';
@@ -58,7 +58,7 @@ run(main, {
 });
 ```
 
-We have plenty of anonymous functions which could be refactored away from `main`, such as the BMI calculation, VNode rendering, etc.
+我们可以从 `main` 函数中重构出许多匿名函数，诸如 BMI 的计算、VNode 的渲染等等。
 
 ```diff
  import xs from 'xstream';
@@ -130,7 +130,7 @@ We have plenty of anonymous functions which could be refactored away from `main`
  });
 ```
 
-`main` still has to handle too many concerns. Can we do better? Yes, we can, by using the insight that `state$.map(state => someVNode)` is a *View* function: renders visual elements as a transformation of state. Let's introduce `function view(state$)`.
+此时 `main` 函数仍然承担了太多的工作。这里我们可以进一步对它进行优化。我们可以将 `state$.map(state => someVNode)` 看作是一个 *View* 函数，它会根据状态的变化来渲染视觉元素，现在让我们来了解 `function view(state$)`。
 
 ```diff
  import xs from 'xstream';
@@ -202,7 +202,7 @@ We have plenty of anonymous functions which could be refactored away from `main`
  });
 ```
 
-Now, `main` is much smaller. But is it doing *one thing*? We still have `changeWeight$`, `changeHeight$`, `weight$`, `height$`, `state$`, and the return using `view(state$)`. Normally when we work with a *View*, we also have a *Model*. What Models normally do is **manage state**. In our case, however, we have `state$` which is self-responsible for its own changes, because it is [reactive](streams.html#streams-reactive-programming). But anyway we have code that defines how `state$` depends on `changeWeight$` and `changeHeight$`. We can put that code inside a `model()` function.
+现在，`main` 函数变得小多了。但它现在是只做*一件事*了吗？它仍然包含了 `changeWeight$`， `changeHeight$`， `weight$`， `height$`， `state$` 和 `view(state$)` 的返回。通常我们处理 *View* 时会使用到 *Model*，而 *Model* 一般用于**状态管理**。但是在我们的例子中，因为 `state$` 是[响应式的](streams.html#streams-reactive-programming)，所以可以自行进行状态的管理。由于在代码中定义了 `state$` 受到 `changeWeight$` 和 `changeHeight$` 的影响。因此我们可以将其放到 `model()` 函数中。
 
 ```diff
  import xs from 'xstream';
@@ -252,7 +252,7 @@ Now, `main` is much smaller. But is it doing *one thing*? We still have `changeW
    const vdom$ = view(state$);
 
    return {
-     DOM: view(state$)
+     DOM: vdom$
    };
  }
 
@@ -261,7 +261,7 @@ Now, `main` is much smaller. But is it doing *one thing*? We still have `changeW
  });
 ```
 
-`main` still defines `changeWeight$` and `changeHeight$`. What are these streams? They are event streams of *Actions*. In the [previous chapter about basic examples](basic-examples.html#basic-examples-increment-a-counter) we had an `action$` stream for incrementing and decrementing a counter. These Actions are deduced or interpreted from DOM events. Their names indicate the user's *intentions*. We can group these stream definitions in an `intent()` function:
+`main` 仍然定义了 `changeWeight$` 和 `changeHeight$`。它们是 *Actions* 的事件流。在[之前的基本示例章节中](basic-examples.html#basic-examples-increment-a-counter) 我们有一个 `action$` 流来对计数器进行增减操作。这些 Actions 是由 DOM 事件来进行解释推理的。它们的名字表明了用户的 *intentions*。我们可以组合这些流定义在一个 `intent()` 函数中：
 
 ```diff
  import xs from 'xstream';
@@ -327,7 +327,7 @@ Now, `main` is much smaller. But is it doing *one thing*? We still have `changeW
  });
 ```
 
-`main` is finally small enough, and works on one level of abstraction, defining how actions are created from DOM events, flowing to model and then to view, and finally back to the DOM. Because these steps are a chain, we can refactor `main` to compose those three functions `intent`, `model`, and `view` together:
+至此 `main` 函数终于变得足够简洁，并且在一个抽象层上定义了如何从 DOM 事件中创建 actions，并流经 model 再流向 view 并最终返回到 DOM 上。通过这一步骤链，我们可以重构 `main` 函数来组合这三个函数 `intent`, `model`, 和 `view`：
 
 ```javascript
 function main(sources) {
@@ -335,79 +335,79 @@ function main(sources) {
 }
 ```
 
-Seems like we cannot achieve a simpler format for `main`.
+这看上去便是最简明的 `main` 函数的格式了。
 
-## Summarized
+## 总结
 
-- `intent()` function
-  - Purpose: interpret DOM events as user's intended actions
-  - Input: DOM source
-  - Output: Action Streams
-- `model()` function
-  - Purpose: manage state
-  - Input: Action Streams
-  - Output: State Stream
-- `view()` function
-  - Purpose: visually represent state from the Model
-  - Input: State Stream
-  - Output: Stream of Virtual DOM nodes as the DOM Driver sink
+- `intent()` 函数
+  - 目的: 将 DOM 事件解释为用户的意图 actions
+  - 输入: DOM source
+  - 输出: Action 流
+- `model()` 函数
+  - 目的: 管理状态
+  - 输入: Action 流
+  - 输出: State 流
+- `view()` 函数
+  - 目的: 视觉地展示 Model 中的状态
+  - 输入: State 流
+  - 输出: 作为 DOM Driver sink 的虚拟 DOM 节点流
 
-**Is Model-View-Intent an architecture?** Is this a new architecture? If so, how is it different to Model-View-Controller?
+那么 **Model-View-Intent 是一种架构吗？**如果是，那么它和 Model-View-Controller 的区别又是什么呢？
 
-## What MVC is really about
+## MVC 是什么
 
-[Model-View-Controller](https://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93controller) (MVC) has existed since the 80s as the cornerstone architecture for user interfaces. It has inspired multiple other important architectures such as [MVVM](https://en.wikipedia.org/wiki/Model_View_ViewModel) and [MVP](https://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93presenter).
+自从 80 年代以来，[Model-View-Controller](https://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93controller) (MVC) 就作为构建用户界面的基础架构，它的理念启发了其他许多重要的架构，例如 [MVVM](https://en.wikipedia.org/wiki/Model_View_ViewModel) 和 [MVP](https://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93presenter)。
 
-MVC is characterized by the Controller: a component which manipulates the other parts, updating them accordingly whenever the user does an action.
+MVC 的特点是控制器：一个操作其他部分的组件，并当用户执行操作时会相应地更新它们。
 
 ![MVC](img/mvc-diagram.svg)
 
-The Controller in MVC is incompatible with our reactive ideals, because it is a proactive component (implying either passive Model or passive View). However, the original idea in MVC was a method for translating information between two worlds: that of the computer's digital realm and the user's mental model. In Trygve's own words:
+MVC 中的控制器与我们的响应式理念是不相容的，因为它是一个主动的组件（隐含了被动 Model 或被动 View）。然而 MVC 的最初理念是一种在计算机数字领域和用户的心理模型之间转换信息的方法。用 Trygve 的话说：
 
-> *The essential purpose of MVC is to bridge the gap between the human user's mental model and the digital model that exists in the computer.* <br />&#8211; [Trygve Reenskaug](http://heim.ifi.uio.no/~trygver/themes/mvc/mvc-index.html), inventor of MVC
+> *MVC 最初的目的是为了在计算机中搭建起用户心理模型和数字模型的桥梁。*<br />&#8211; [Trygve Reenskaug](http://heim.ifi.uio.no/~trygver/themes/mvc/mvc-index.html)，MVC 设计模式的提出者。
 
-We can keep the MVC idea while avoiding a proactive Controller. In fact, if you observe our `view()` function, it does nothing else than transform state (digital model in the computer) to a visual representation useful for the user. View is a translation from one language to another: from binary data to English and other human-friendly languages.
+我们可以保留 MVC 的理念来避免一个主动的控制器。实际上，如果你观察 `view()` 函数，它除了将状态（计算机中的数字模型）转换为对用户能够理解的视图表示外什么也不做。因此 View 其实是一种语言到另一种语言的转换：从二进制数据到英语或者其他对人类友好的语言。
 
 ![view translation](img/view-translation.svg)
 
-The opposite direction should be also a straightforward translation from the user's actions to *new* digital data. This is precisely what `intent()` does: interprets what the user is trying to affect in the context of the digital model.
+而相反的方向应该是直接从用户的动作转换到*新*的数字数据。这正是 `intent()` 所要做的：在数字模型的内容里解释用户意图影响的内容。
 
 ![intent translation](img/intent-translation.svg)
 
-Model-View-Intent (MVI) is **reactive**, **functional**, and follows the **core idea in MVC**. It is reactive because Intent observes the User, Model observes the Intent, View observes the Model, and the User observes the View. It is functional because each of these components is expressed as a [referentially transparent](https://en.wikipedia.org/wiki/Referential_transparency_%28computer_science%29) function over streams. It follows the original MVC purpose because View and Intent bridge the gap between the user and the digital model, each in one direction.
+Model-View-Intent (MVI) 是**响应式**、**函数式**的，并遵循了 **MVC 的核心理念**。在整个流程中 Intent 监听着用户的行为，Model 监听着 Intent，View 监听着 Model，而用户也监听着 View，因此它是响应式的。而它同样也是函数式的，因为每一个组件都在流中被表示为一个[引用透明](https://en.wikipedia.org/wiki/Referential_transparency_%28computer_science%29)的函数。它遵循它遵循了 MVC 最初的目的，因为 View 和 Intent 在用户和数字模型中搭建了桥梁。
 
-> ### Why CSS selectors?
+> ### 为什么是 CSS 选择器?
 >
-> Some programmers get concerned about `DOM.select(selector).events(eventType)` being a bad practice because it resembles spaghetti code in jQuery-based programs. They would rather prefer the virtual DOM elements to specify handler callbacks for events, such as `onClick={this.handleClick()}`.
+> 一些程序员关注到 `DOM.select(selector).events(eventType)` 是一种糟糕的实践方式，因为它类似于 jQuery 结构的程序一样，会将程序裹挟的如一团乱麻一样。他们更倾向于选择虚拟 DOM 元素来指定事件处理回调，例如 `onClick={this.handleClick()}`。
+> 
+> 而在 Cycle *DOM* 中选择基于选择的事件处理其实是一个明智而理性的决定。这个策略将使得 MVI 遵循响应式理念，它的灵感来自于[开闭原则](https://en.wikipedia.org/wiki/Open/closed_principle)。
 >
-> The choice for selector-based event querying in Cycle *DOM* is an informed and rational decision. This strategy enables MVI to be reactive and is inspired by the [open-closed principle](https://en.wikipedia.org/wiki/Open/closed_principle).
->
-> **Important for reactivity and MVI.** If we had Views with `onClick={this.handleClick()}`, it would mean Views would *not* be anymore a simple translation from digital model to user mental model, because we also specify what happens as a consequence of the user's actions. To keep all parts in a Cycle.js app reactive, we need the View to simply declare a visual representation of the Model. Otherwise the View becomes a Proactive component. It is beneficial to keep the View responsible only for declaring how state is visually represented: it has a [single responsibility](https://en.wikipedia.org/wiki/Single_responsibility_principle) and is friendly to UI designers. It is also conceptually aligned with the [original View in MVC](http://heim.ifi.uio.no/~trygver/1979/mvc-2/1979-12-MVC.pdf): "*... a view should never know about user input, such as mouse operations and
-keystrokes.*"
->
-> **Adding user actions shouldn't affect the View.** If you need to change Intent code to grab new kinds of events from the element, you don't need to modify code in the VTree element. The View stays untouched, and it should, because translation from state to DOM hasn't changed.
->
-> The MVI strategy in Cycle DOM is to name most elements in your View with appropriate semantic classnames. Then you do not need to worry which of those can have event handlers, if all of them can. The classname is the common artifact which the View (DOM sink) and the Intent (DOM source) can use to refer to the same element.
->
-> As we will see in the [Components](components.html) chapter, risk of global className collision is not a problem in Cycle.js because of the `isolate()` helper.
+> **这对 MVI 和响应式十分重要**。如果我们让 Views 支持 `onClick={this.handleClick()}`，这意味着 Views 不再是一个简单的从数字模型到用户心理模型的转换，因为我们还指定了用户操作的结果。为了保证 Cycle.js 应用中的所有部分都是响应式的，我们需要用 View 来简单地声明 Model 的视图展示。否则 View 将会变为一个主动性的组件。让 View 在这里只负责状态的视图展示职责是更有益的：这里遵循了[单一职责概念](https://en.wikipedia.org/wiki/Single_responsibility_principle)并且对 UI 设计人员是友好的。它在概念上也与 [MVC 中的原始视图](http://heim.ifi.uio.no/~trygver/1979/mvc-2/1979-12-MVC.pdf)一致："*...视图永远不应该知道用户的输入，例如鼠标、键盘的操作。*"
+> 
+> **添加用户的动作不应该影响到 View。** 如果你需要改变 Intent 代码来从元素中获取新类型的事件，你不需要来修改 VTree 元素中的代码。View 应当保持着不受影响的状态，因为从状态到 DOM 的转换并没有改变。
+> 
+> 在 Cycle DOM 中 MVI 策略是使用适当的语义类名来命名 View 中的大多数元素。如果它们都做到这样，你便不再需要担心哪些是包含了事件处理的逻辑。类名将作为通用的设计来保证 View (DOM sink) 和 Intent (DOM source) 可以被引用到相同的元素。
+> 
+> 正如我们在[组件](components.html)章节中看到的，因为有 `isolate()` 的帮助，全局类名的冲突在 Cycle.js 里也并不是问题。
 
-MVI is an architecture, but in Cycle it is nothing else than simply a function decomposition of `main()`.
+所以 MVI 是一种架构，但在 Cycle.js 中，它只不过是对 `main()` 函数进行的简单分解。
 
 ![main equal MVI](img/main-eq-mvi.svg)
 
-In fact, MVI itself just naturally emerged from our refactoring of `main()` split into functions. This means Model, View, and Intent are not rigorous containers where you should place code. Instead, they are just a convenient way of organizing code, and are very cheap to create because they are simply functions. Whenever convenient, you should split a function if it becomes too large. Use MVI as a guide on how to organize code, but don't confine your code within its limits if it doesn't make sense.
+实际上，MVI 本身就是在我们对 `main()` 函数的重构中自然产生出来的。这意味着 Model、View 和 Intent 并不是严格的需要放置代码的模块。相反，它们只是一种十分简单方便的组织代码的形式，因为它们只是简单的函数。无论什么时候，只要一个函数变得足够冗余时，它就应该被拆分开。我们可以使用 MVI 作为指导来组织代码，但如果这对你的代码没有意义，那么请不要被这些规则所束缚。
 
-This is what it means to say Cycle.js is *sliceable*. MVI is just one way of slicing `main()`.
+这同样意味着 Cycle.js 是*可切片的*。MVI 只是分割 `main()` 函数的一种方法。
 
-> ### "Sliceable"?
+> ### 可切片的？
 >
-> With "sliceable", we mean the ability to refactor the program by extracting pieces of code without having to significantly modify their surroundings. Sliceability is a feature often found in functional programming languages, especially in LISP-based languages like [Clojure](https://en.wikipedia.org/wiki/Clojure), which use S-expressions to enable treating [*code as data*](https://en.wikipedia.org/wiki/Homoiconicity).
+> "可切片的"，指的是可以通过提取代码片段来重构程序，而并不需要对其周边进行过大修改的能力。
+可切片的特性在函数式编程语言中经常出现，尤其是基于 LISP 的语言如 [Clojure](https://en.wikipedia.org/wiki/Clojure)（使用 S 表达式来将[代码作为数据](https://en.wikipedia.org/wiki/Homoiconicity)进行处理）。
 
-## Pursuing DRY
+## 追求 DRY
 
-As good programmers writing good codebases, we must follow [DRY: Don't Repeat Yourself](https://en.wikipedia.org/wiki/Don%27t_repeat_yourself). The MVI code we wrote is not entirely DRY.
+作为优秀的程序员应当编写好的代码库，我们需要遵守[DRY:Don't Repeat Yourself（不要自我重复）](https://en.wikipedia.org/wiki/Don%27t_repeat_yourself)的理念。而我们目前写的 MVI 代码并不是完全的做到了 DRY。
 
-For instance, the View rendering of the sliders share a significant amount of code. And in the Intent, we have some duplication of the `DOM.select().events()` streams.
+例如，滑块的视图包含了相当数量的可共享代码。在 Intent 中，我们有一些重复的 `dom.select().events()` 流。
 
 ```javascript
 function renderWeightSlider(weight) {
@@ -436,7 +436,7 @@ function intent(domSource) {
 }
 ```
 
-We could create functions to remove this duplication, as such:
+我们可以创建一些函数来消除这类重复，就像这样：
 
 ```javascript
 function renderSlider(label, value, unit, className, min, max) {
@@ -468,4 +468,4 @@ function intent(domSource) {
 }
 ```
 
-But this still isn't ideal: we seem to have *more* code now. What we really want is just to create *labeled sliders*: one for height, and the other for weight. We should be able to build a generic and reusable labeled slider. In other words, we want the labeled slider to be a [component](components.html).
+但这仍然不理想：似乎我们现在的代码量变得*更多*了。其实我们真正想要的只是创建*有标签的滑块*：一个设置高度，另一个设置重量。我们应该构建一个通用的、可复用的标签滑块。换句话说，我们希望标签滑块成为一个[组件](components.html)。

@@ -1,16 +1,16 @@
-# Streams
+# 流
 
-## Reactive Programming
+## 响应式编程
 
-Reactivity is an important aspect in Cycle.js, and part of the core principles that led to the creation of this framework. There is a lot of confusion surrounding what Reactive means, so let's focus on that topic for a while.
+响应式是 Cycle.js 的一个重要方面，也是催生此框架诞生的核心原则之一。因为响应式这个词有太多不同的定义，所以在讨论之前，我们先来定义一下我们所讲的响应式。
 
-Say you have a module Foo and a module Bar. A *module* can be considered to be an object of an [OOP](https://en.wikipedia.org/wiki/Object-oriented_programming) class, or any other mechanism of encapsulating state. Let's assume all code lives in some module. Here we have an arrow from Foo to Bar, indicating that Foo somehow affects state living inside Bar.
+比如现在有一个模块 Foo 和模块 Bar。一个模块可以被认为是一个 [OOP](https://en.wikipedia.org/wiki/Object-oriented_programming) 类的对象，或其他封装状态的机制。我们假设所有代码都被包装成一些模块。这里我们用一个从 Foo 到 Bar 的箭头，表示 Foo 会因某种原因影响 Bar 的状态。
 
 ![modules foo bar](img/modules-foo-bar.svg)
 
-A practical example of such arrow would be: *whenever Foo does a network request, increment a counter in Bar*. If all code lives in some module, **where does this arrow live?** Where is it defined? The typical choice would be to write code inside Foo which calls a method in Bar to increment the counter.
+关于图中的箭头，举一个实际应用的例子：*每当 Foo 执行一次网络请求，Bar 中计数器自增*。如果所有的代码都被包装在一些模块里，**那这个箭头被放置在哪里？** 它是在哪里定义的呢？很典型的做法是在 Foo 中编写代码，来调用 Bar 中的方法使得计数器自增。
 
-> Inside module Foo
+> 模块 Foo 内部
 
 ```javascript
 function onNetworkRequest() {
@@ -20,19 +20,19 @@ function onNetworkRequest() {
 }
 ```
 
-Because Foo owns the relationship "*when network request happens, increment counter in Bar*", we say the arrow lives at the arrow tail, i.e., Foo.
+因为 Foo 拥有“*当网络请求发生时，在 Bar 中的计数器自增*”的能力，所以我们说箭头在箭尾那里，也就是在 Foo 那里。
 
 ![passive foo bar](img/passive-foo-bar.svg)
 
-Bar is **passive**: it allows other modules to change its state. Foo is proactive: it is responsible for making Bar's state function correctly. The passive module is unaware of the existence of the arrow which affects it.
+Bar 本身是 **被动的**，它允许其他模块改变其状态。而 Foo 是主动的，它负责使 Bar 的状态正常工作。被动的模块是不知道影响它的箭头的存在的。
 
-The alternative to this approach inverts the ownership of the arrow, without inverting the arrow's direction.
+替代方法是逆置箭头的所有权，而不是简单反转其方向。
 
 ![passive foo bar](img/reactive-foo-bar.svg)
 
-With this approach, Bar listens to an event happening in Foo, and manages its own state when that event happens. Bar is **reactive**: it is fully responsible for managing its own state by reacting to external events. Foo, on the other hand, is unaware of the existence of the arrow originating from its network request event.
+在这种方法中，Bar 会监听 Foo 中发生的事件，并在该事件发生时管理自己的状态。Bar 是响应式的：它通过对外部事件作出反应来管理自己的状态。另一方面，Foo 感知不到那些源自其网络请求事件的箭头的存在。
 
-> Inside module Bar
+> 模块 Bar 内部
 
 ```javascript
 Foo.addOnNetworkRequestListener(() => {
@@ -40,27 +40,27 @@ Foo.addOnNetworkRequestListener(() => {
 });
 ```
 
-What is the benefit of this approach? It is Inversion of Control, mainly because Bar is responsible for itself. Plus, we can hide Bar's `incrementCounter()` as a private function. In the passive case, it was required to have `incrementCounter()` public, which means we are exposing Bar's internal state management outwards. It also means if we want to discover how Bar's counter works, we need to find all usages of `incrementCounter()` in the codebase. In this regard, Reactive and Passive seem to be dual to each other.
+这种做法有什么优势呢？因为逆置了箭头控制权，使得 Bar 自己负责自己。另外，我们还可以将 Bar 的 `incrementCounter()` 作为私有方法隐藏。在被动模式下，Bar 被要求将 `incrementCounter()` 公开，这就意味着我们向外暴露了 Bar 内部的状态管理。也就是说，如果我们想要知道 Bar 的计数器如何工作，我们需要找到代码库中关于 `incrementCounter()` 的所有的用法。在这方面，响应式和被动似乎是相互的。
 
 |                       | Passive                 | Reactive      |
 |-----------------------|-------------------------|---------------|
 | How does Bar work?    | *Find usages*           | Look inside   |
 
-On the other hand, when applying the Reactive pattern, if you want to discover which modules are affected by an event in a Listenable module, you must find all usages of that event.
+另一方面，在响应模式下，如果想查找哪些模块会被一个可监听模块中事件影响的话，你必须找到这个事件的所有用途。
 
 |                             | Proactive               | Listenable    |
 |-----------------------------|-------------------------|---------------|
 | Which modules are affected? | Look inside             | *Find Usages* |
 
-Passive/Proactive programming has been the default way of working for most programmers in imperative languages. Sometimes the Reactive pattern is used, but sporadically. The selling point for widespread Reactive programming is to build self-responsible modules which focus on their own functionality rather than changing external state. This leads to Separation of Concerns.
+被动／主动编程一直是大多数程序员在命令式语言中工作的默认方式。有时使用响应式模式，但也只是偶尔。响应式编程最大的卖点就是可以建立自主模块，自主模块能专注于自己的功能，而不是改变外部状态。这导致了关注点分离。
 
-The challenge with Reactive programming is this paradigm shift where we attempt to choose the Reactive/Listenable approach by default, before considering Passive/Proactive. After rewiring your brain to think Reactive-first, the learning curve flattens and most tasks become straightforward, especially when using a Reactive library like RxJS or *xstream*.
+在考虑被动／主动模式之前，我们都试图将响应／监听模式作为默认选择。而响应式编程的挑战就是这种编程思想的转变。转变你的思想为“响应式优先”，这会使你学习曲线变得平坦，大部分任务也变得简单明了，尤其是当我们使用诸如 RxJS 或者 *xstream* 这样的响应式库。
 
-## What is a Stream?
+## 什么是流？
 
-Reactive programming can be implemented with: event listeners, [RxJS](http://reactivex.io/rxjs), [Bacon.js](http://baconjs.github.io/), [Kefir](https://rpominov.github.io/kefir/), [most.js](https://github.com/cujojs/most), [EventEmitter](https://nodejs.org/api/events.html), [Actors](https://en.wikipedia.org/wiki/Actor_model), and more. Even [spreadsheets](https://en.wikipedia.org/wiki/Reactive_programming) utilize the same idea of the cell formula defined at the arrow head. The above definition of Reactive programming is not limited to streams, and does not conflict with previous definitions of Reactive Programming. Cycle.js supports multiple stream libraries, such as [RxJS](http://reactivex.io/rxjs), [xstream](http://staltz.com/xstream), and [most.js](https://github.com/cujojs/most), but by default we choose *xstream* because it was custom built for Cycle.js.
+可以通过以下方式实现响应式编程：事件监听器、[RxJS](http://reactivex.io/rxjs)、[Bacon.js](http://baconjs.github.io/)、[Kefir](https://rpominov.github.io/kefir/)、[most.js](https://github.com/cujojs/most)、[EventEmitter](https://nodejs.org/api/events.html)、[Actors](https://en.wikipedia.org/wiki/Actor_model) 等等。甚至 [spreadsheets](https://en.wikipedia.org/wiki/Reactive_programming) 也利用了箭头所定义的单元格公式实现了相同的想法。上述对响应式编程的定义不仅仅局限于流，并且与以前的响应式编程定义不冲突。Cycle.js 支持多个流库，如 [RxJS](http://reactivex.io/rxjs)、[xstream](http://staltz.com/xstream) 以及 [most.js](https://github.com/cujojs/most)。但默认情况下我们选择 *xstream*，因为它是为 Cycle.js 定制的。
 
-In short, a *Stream* in *xstream* is an event stream which can emit zero or more events, and may or may not finish. If it finishes, then it does so by either emitting an error or a special "complete" event.
+简而言之，*xstream* 中的 *Stream* 是可以触发零个或多个事件的事件流，这个事件流可能完成也可能不完成。如果完成，那么它会触发错误或特殊的 "complete" 事件。
 
 > Stream contract
 
@@ -68,11 +68,11 @@ In short, a *Stream* in *xstream* is an event stream which can emit zero or more
 (next)* (complete|error){0,1}
 ```
 
-As an example, here is a typical Stream: it emits some events, then it eventually completes.
+举个例子，这里是一个典型的Stream：触发一些事件，然后最终完成。
 
 ![completed stream](img/completed-stream.svg)
 
-Streams can be listened to, just like EventEmitters and DOM events can. Notice there are 3 handlers: one for events, one for errors, and one for "complete".
+Streams 可以被监听，就像 EventEmitters 和 DOM 事件一样。注意到有 3 个处理程序：一个用于事件处理，一个用于错误处理，一个用于 "complete"。
 
 ```javascript
 myStream.addListener({
@@ -88,7 +88,7 @@ myStream.addListener({
 });
 ```
 
-*xstream* Streams become very useful when you transform them with the so-called *operators*, pure functions that create new Streams on top of existing ones. Given a Stream of click events, you can easily make a Stream of the number of times the user clicked.
+当你使用所谓的 *operators* 转换它们时，*xstream* Streams 会变得非常有用，纯函数可以在现有的 Stream 之上创建新的 Streams。给定一个点击事件流，你可以轻松地创建用户点击次数的流。
 
 > Operators
 
@@ -100,29 +100,29 @@ const clickCountStream = clickStream
   .fold((count, x) => count + x, 0);
 ```
 
-[Succinctness is Power](http://www.paulgraham.com/power.html), and *xstream* operators demonstrate that you can achieve a lot with a few well-placed operators. With only about [26 operators](https://github.com/staltz/xstream#methods-and-operators), you can build almost all programming patterns needed in a Cycle.js app.
+[简洁才是王道](http://www.paulgraham.com/power.html)，*xstream* 运算符表明，你可以通过一些适当的运算符完成很多事。只需要约 [26 个运算符](https://github.com/staltz/xstream#methods-and-operators)，就可以构建 Cycle.js 应用程序中几乎所有的编程模式。
 
-Knowing the basics of reactive streams programming is a prerequisite to getting work done with Cycle.js. Instead of teaching RxJS or *xstream* on this site, we recommend a few great learning resources, in case you need to learn more. *xstream* is similar to *RxJS*, so these resources apply:
+了解响应式编程的基础知识是使用 Cycle.js 完成工作的先决条件。我们不会在本网站提供 RxJS 或者 *xstream* 相关的教学，如果你需要学习更多，我们会推荐一些很棒的学习资源。*xstream* 和 *RxJS* 很类似，所以下列资源都很适用：
 
-- [The introduction to Reactive Programming you've been missing](https://gist.github.com/staltz/868e7e9bc2a7b8c1f754): a thorough introduction to RxJS by Cycle.js author Andre Staltz.
-- [Introduction to Rx](http://introtorx.com/): an online book focused on Rx.NET, but most concepts map directly to RxJS.
-- [ReactiveX.io](http://reactivex.io/): official cross-language documentation site for ReactiveX.
-- [Learn Rx](http://reactivex.io/learnrx/): an interactive tutorial with arrays and Observables, by Jafar Husain.
+- [The introduction to Reactive Programming you've been missing](https://gist.github.com/staltz/868e7e9bc2a7b8c1f754)：Cycle.js 作者 Andre Staltz 对 RxJS 的全面介绍
+- [Introduction to Rx](http://introtorx.com/)：一本专注 Rx.NET 的在线图书，但大多数概念直接映射到RxJS
+- [ReactiveX.io](http://reactivex.io/)：ReactiveX 的官方跨语言文档站点
+- [Learn Rx](http://reactivex.io/learnrx/)：由 Jafar Husain 提供的数组和 Observables 的互动教程
 - [RxJS lessons at Egghead.io](https://egghead.io/technologies/rx)
 - [RxJS GitBook](http://xgrommx.github.io/rx-book/)
-- [RxMarbles](http://rxmarbles.com/): interactive diagrams of RxJS operators, built with Cycle.js.
-- [Async JavaScript at Netflix](https://www.youtube.com/watch?v=XRYN2xt11Ek): video of Jafar Husain introducing RxJS.
+- [RxMarbles](http://rxmarbles.com/)：RxJS 运算符的交互图，由 Cycle.js 创建
+- [Async JavaScript at Netflix](https://www.youtube.com/watch?v=XRYN2xt11Ek)：Jafar Husain 介绍 RxJS 的视频
 
-## Streams in Cycle.js
+## Cycle.js 中的 Streams
 
-Now we are able to explain the types of `senses` and `actuators`, and what it means for the computer and human to be "mutually observed."
+现在我们能够解释 `senses` 和 `actuators` 的类型，这意味着计算机和人类“相关观察”。
 
-In the simplest case, the computer generates pixels on the screen, and the human generates mouse and keyboard events. The computer observes these user inputs and the human observes the screen state generated by the computer. Notice that we can model each of these as *Streams*:
+在最简单的情况下，计算机会在屏幕上生成像素，人类会触发鼠标和键盘事件。计算机观察这些用户输入，人们观察计算机生成的屏幕状态。我们可以将其建模为 *Streams*:
 
-- Computer's output: a stream of screen images.
-- Human's output: a stream of mouse/keyboard events.
+- 电脑输出：屏幕图像流。
+- 人的输出：鼠标／键盘时间流。
 
-The `computer()` function takes the human's output as its input, and vice versa. They mutually observe each other's output. In JavaScript, we could write the computer function as a simple chain of *xstream* transformations on the input stream.
+`computer()` 函数将人的输出作为输入，反之亦然。它们相互观察对象的输出。在 JavaScript 中，我们可以将计算机功能写成输入流中的简单的 *xstream* 转换链。
 
 ```javascript
 function computer(userEventsStream) {
@@ -134,20 +134,20 @@ function computer(userEventsStream) {
 }
 ```
 
-While doing the same with the `human()` function would be elegant, we cannot do that as a simple chain of operators because we need to leave the JavaScript environment and affect the external world. While conceptually the `human()` function can exist, in practice, we need to use *driver* functions in order to reach the external world.
+如果我们能在 `human()` 函数中在做同样的事，这会很优雅。但实际上，我们不能简单地通过串联一些运算符来实现，因为我们需要离开 JavaScript 的环境，去影响外部世界。从概念上来讲，实际上 `human()` 函数是可以存在的，我们会使用 *driver* 去影响外部世界。
 
-[Drivers](drivers.html) are adapters to the external world, and each driver represents one aspect of external effects. For instance, the DOM Driver takes a "screen" Stream generated by the computer, and returns Streams of mouse and keyboard events. In between, the DOM Driver function produces "*write*" side effects to render elements on the DOM, and catches "*read*" side effects to detect user interaction. This way, the DOM Driver function can act on behalf of the user. The name "driver" is based off Operating System drivers, which have a similar kind of role: to create a bridge between devices and your software.
+[Drivers](drivers.html) 是外部世界的适配器，每个 driver 都代表外部效果的一个方面。例如，DOM Driver 接受计算机生成的“屏幕”流，并返回鼠标和键盘事件的流。在这两者之间，DOM Driver 函数会产生 “*写*” 副作用去渲染 DOM 中的元素，并捕捉 “*读*” 的副作用去监测用户交互。这样，DOM Driver 函数就可以代表用户行为了。"driver" 这个名字基于操作系统驱动程序，并且跟它具有类似的作用：在设备和软件之间架设桥梁。
 
-Joining both parts, we have a computer function, often called `main()`, and a driver function, where the output of one is the input of the other.
+连接了这两个部分，我们会获得一个叫 `main()` 的运算函数，另外还有一个 driver 函数，其中一个输出是另一个的输入。
 
 ```
 y = domDriver(x)
 x = main(y)
 ```
 
-The circular dependency above cannot be solved if `=` means assignment, because that would be equivalent to the command `x = g(f(x))`, and `x` is undefined on the right-hand side.
+如果 `=` 表示赋值的话，上述循环依赖性则无法被求解。因为这将等价于命令 `x = g(f(x))`，并且 `x` 在右侧表达式中未定义。
 
-This is where Cycle.js comes in: you only need to specify `main()` and `domDriver()`, and give it to the Cycle.js `run()` command which connects them circularly.
+你只需要指定 `main()` 和 `domDriver()` 来定义 Cycle.js 的入口，并将它们赋给循环连接它们的 Cycle.js `run()` 方法。
 
 ```javascript
 function main(sources) {
@@ -165,6 +165,6 @@ const drivers = {
 run(main, drivers); // solve the circular dependency
 ```
 
-This is how the name "*Cycle.js*" came to be. It is a framework that solves the cyclic dependency of streams which emerge during dialogues (mutual observations) between the Human and the Computer.
+这就是 "*Cycle.js*" 的由来。它是一个解决人与计算机之间的对话（相互观察）期间出现的流的循环依赖的框架。
 
-Next, read the [basic examples](basic-examples.html) which apply what we've learned so far about Cycle.js.
+接下来，请阅读[基本示例](basic-examples.html)，它将我们迄今为止所学习的关于 Cycle.js 的知识付诸实践。

@@ -4,7 +4,8 @@
   <meta charset='utf-8'>
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
   <meta name="viewport" content="width=device-width">
-  <title>Cycle.js - API reference (isolate)</title>
+  <meta name="keyword" content="cycle.js,中文,cyclejs 中文,javascript,functional,函数式,reactive,响应式">
+  <title>Cycle.js - API 索引</title>
 
   <!-- Flatdoc -->
   <script src='../support/vendor/jquery.js'></script>
@@ -24,22 +25,22 @@
   <link href='../support/vendor/highlight-github-gist.css' rel='stylesheet'>
 
   <!-- Meta -->
-  <meta content="Cycle.js - API reference (isolate)" property="og:title">
-  <meta content="A functional and reactive JavaScript framework for predictable code" name="description">
+  <meta content="Cycle.js - API 索引" property="og:title">
+  <meta content="一个函数式和响应式的 JavaScript 框架，用来编写前瞻性代码。" name="description">
 
   <!-- Content -->
   <script id="markdown" type="text/markdown" src="index.html">
 # Isolate
 
-A utility function to make scoped dataflow components in Cycle.js.
+在 Cycle.js 中，Isolate 是一个限制数据流组件的作用域的工具函数。
 
 ```
 npm install @cycle/isolate
 ```
 
-See the Cycle.js [documentation on components](http://cycle.js.org/components.html#multiple-instances-of-the-same-component) for further details.
+详细内容请看 Cycle.js 相关的[组件文档](http://cycle.js.org/components.html#multiple-instances-of-the-same-component)。
 
-## Example
+## 案例
 
 ```js
 import isolate from '@cycle/isolate';
@@ -53,9 +54,9 @@ function bmiCalculator({DOM}) {
     label: 'Height', unit: 'cm', min: 140, initial: 170, max: 210
   });
 
-  // LabeledSlider is a dataflow component
-  // isolate(LabeledSlider) is an impure function: it generates
-  // a NEW dataflow component every time it is called.
+  // LabeledSlider 是一个数据流组件
+  // isolate(LabeledSlider) 不是一个纯函数：在每次调用时，它都生成一个新的数据流组件。
+  
   let WeightSlider = isolate(LabeledSlider);
   let HeightSlider = isolate(LabeledSlider);
 
@@ -87,63 +88,40 @@ function bmiCalculator({DOM}) {
 
 # API
 
-
 ## <a id="isolate"></a> `isolate(component, scope)`
+以 `component` 函数和 `scope` 为输入，返回一个 `component` 函数的隔离版本。
 
-Takes a `component` function and a `scope`, and returns an isolated version
-of the `component` function.
+如果可以的话，当独立的组件被调用时，`source.isolateSource(source, scope)` 方法把提供给它的每个 `source` 和其指定的 `scope` 分开。与此类似，`source.isolateSink(sink, scope)` 方法把返回于独立组件的 `sink` 和被给定的 `scope` 分割开。
 
-When the isolated component is invoked, each source provided to it is
-isolated to the given `scope` using `source.isolateSource(source, scope)`,
-if possible. Likewise, the sinks returned from the isolated component are
-isolated to the given `scope` using `source.isolateSink(sink, scope)`.
-
-The `scope` can be a string or an object. If it is anything else than those
-two types, it will be converted to a string. If `scope` is an object, it
-represents "scopes per channel", allowing you to specify a different scope
-for each key of sources/sinks. For instance
+`scope` 可以是一个字符串或者一个对象。如果它使除了这两种类型以外的其他东西，它都会被转化为字符串。如果 `scope` 是一个对象，它代表着“每个渠道各自的 scope”，这也就允许你去对 sources/sinks 中的每一个 key 值指定一个不同的 scope。例如：
 
 ```js
 const childSinks = isolate(Child, {DOM: 'foo', HTTP: 'bar'})(sources);
 ```
 
-You can also use a wildcard `'*'` to use as a default for source/sinks
-channels that did not receive a specific scope:
+你可以使用通配符 `'*'` 作为未收到特定 scope 的 source/sinks 的默认渠道：
 
 ```js
-// Uses 'bar' as the isolation scope for HTTP and other channels
+// 使用 'bar' 作为对于 HTTP 渠道和其他渠道的 isolation scope
 const childSinks = isolate(Child, {DOM: 'foo', '*': 'bar'})(sources);
 ```
-
-If you don't have a wildcard and some channels are unspecified, then
-`isolate` will generate a random scope.
+如果你没有使用通配符，并且渠道也不明确，那么 `isolate` 会生成一个随机的 scope。
 
 ```js
-// Uses some arbitrary string as the isolation scope for HTTP and other channels
+// 使用一些任意字符串作为 HTTP 和其他渠道的 isolation scope
 const childSinks = isolate(Child, {DOM: 'foo'})(sources);
 ```
+如果 `scope` 参数根本没有提供，就会自动生成一个新的 scope。这就意味着尽管 **`isolate(component, scope)` 是纯函数**（即透明的），然而  **`isolate(component)` 不是纯函数**（即不透明的）。两种对 `isolate(Foo, bar)` 调用都会生成一样的组件，但是两种方式调用 `isolate(Foo)` 会生成两个不同的组件。
 
-If the `scope` argument is not provided at all, a new scope will be
-automatically created. This means that while **`isolate(component, scope)` is
-pure** (referentially transparent), **`isolate(component)` is impure** (not
-referentially transparent). Two calls to `isolate(Foo, bar)` will generate
-the same component. But, two calls to `isolate(Foo)` will generate two
-distinct components.
+注意到 `isolateSource()` 和 `isolateSink()` 两个方法都有 `source` 的静态成员。这是因为当应用程序产生 `sink` 时，driver 生成了 `source`。并且 `isolateSource()` 和 `isolateSink()` 函数都是由 driver 执行的。
 
-Note that both `isolateSource()` and `isolateSink()` are static members of
-`source`. The reason for this is that drivers produce `source` while the
-application produces `sink`, and it's the driver's responsibility to
-implement `isolateSource()` and `isolateSink()`.
+#### 参数：
+- `component: 函数` 一个把 `sources` 作为入参，输出一个 `sinks` 集合的函数。
 
-#### Arguments:
+- `scope: 字符串` 一个可选字符串，当返回的独立组件被调用时，隔离每个 `sources` 和`sinks`。
 
-- `component: Function` a function that takes `sources` as input and outputs a collection of `sinks`.
-- `scope: String` an optional string that is used to isolate each `sources` and `sinks` when the returned scoped component is invoked.
-
-#### Returns:
-
-*(Function)* the scoped component function that, as the original `component` function, takes `sources` and returns `sinks`.
-
+#### 返回：
+**（函数）** 作用域分量函数作为原始的 `component` 函数，以 `sources` 为输入，返回 `sinks`。
 
   </script>
 
@@ -168,8 +146,8 @@ implement `isolateSource()` and `isolateSink()`.
     <div class='left'>
       <h1><a href="/"><img class="logo" src="../img/cyclejs_logo.svg" >Cycle.js</a></h1>
       <ul>
-        <li><a href='../getting-started.html'>Documentation</a></li>
-        <li><a href='../api/index.html'>API reference</a></li>
+        <li><a href='../getting-started.html'>中文文档</a></li>
+        <li><a href='../api/index.html'>API 索引</a></li>
         <li><a href='../releases.html'>Releases</a></li>
         <li><a href='https://github.com/cyclejs/cyclejs'>GitHub</a></li>
       </ul>
@@ -187,10 +165,38 @@ implement `isolateSource()` and `isolateSink()`.
 
         <div role='flatdoc-menu'></div>
 
+        <ul>
+  
+            <li><a href="../api/run.html" class="level-1 out-link">Cycle Run</a></li>
+  
+            <li><a href="../api/rxjs-run.html" class="level-1 out-link">Cycle RxJS Run</a></li>
+  
+            <li><a href="../api/most-run.html" class="level-1 out-link">Cycle Most Run</a></li>
+  
+            <li><a href="../api/dom.html" class="level-1 out-link">Cycle DOM</a></li>
+  
+            <li><a href="../api/html.html" class="level-1 out-link">Cycle HTML</a></li>
+  
+            <li><a href="../api/http.html" class="level-1 out-link">Cycle HTTP</a></li>
+  
+            <li><a href="../api/history.html" class="level-1 out-link">Cycle History</a></li>
+  
+            <li><a href="../api/isolate.html" class="level-1 out-link">Cycle Isolate</a></li>
+  
+            <li><a href="../api/jsonp.html" class="level-1 out-link">Cycle JSONP</a></li>
+  
+        </ul>
+
+
       </div>
     </div>
     <div role='flatdoc-content' class='content'></div>
 
+    <footer style="text-align: center">
+      <a href="http://www.miitbeian.gov.cn/" target="_blank">
+        粤ICP备14056081号-3
+      </a>
+    </footer>
   </div>
 
 

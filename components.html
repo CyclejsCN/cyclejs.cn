@@ -4,7 +4,8 @@
   <meta charset='utf-8'>
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
   <meta name="viewport" content="width=device-width">
-  <title>Cycle.js - Components</title>
+  <meta name="keyword" content="cycle.js,中文,cyclejs 中文,javascript,functional,函数式,reactive,响应式">
+  <title>Cycle.js - 组件</title>
 
   <!-- Flatdoc -->
   <script src='support/vendor/jquery.js'></script>
@@ -24,42 +25,42 @@
   <link href='support/vendor/highlight-github-gist.css' rel='stylesheet'>
 
   <!-- Meta -->
-  <meta content="Cycle.js - Components" property="og:title">
+  <meta content="Cycle.js - 组件" property="og:title">
   <meta content="一个函数式和响应式的 JavaScript 框架，用来编写前瞻性代码。" name="description">
 
   <!-- Content -->
   <script id="markdown" type="text/markdown" src="index.html">
-# Components
+# 组件
 
-## Automatically reusable
+## 自动可重用
 
-User interfaces are usually made up of many reusable pieces: buttons, charts, sliders, hoverable avatars, smart form fields, etc. In many frameworks, including Cycle.js, these are called components. However, in this framework they have a special property.
+UI 通常由许多可重用的元素组成：按钮，图表，滑块，划过时拥有效果的头像，智能表单域等等。包含 Cycle.js 在内的许多前端框架中，这些元素被称为组件。但在 Cycle.js 中，组件还具有一个特性。
 
-**Any Cycle.js app can be reused as a component in a larger Cycle.js app.**
+**任意 Cycle.js 应用都能够被作为一个组件重用到更大的一个 Cycle.js 应用中。**
 
-How is that so? In any framework you can build a program that just makes one slider. By now, we know how to make a Cycle.js `main()` that makes a smart slider widget. Then, since `main()` is just a function taking inputs from the external world and generating outputs in return, we can just call that function inside a larger Cycle.js app.
+这个特性是什么意思呢？它意味着你可以构建一个应用程序，它简单到只是制作一个滑块组件，这个组件在前文中我们已经用 Cycle.js `main()` 实现了。之后，由于 `main()` 仅只是一个函数，它从外部世界获得输入，并通过 return 来产出输出，在一个更大的 Cycle.js 应用中，我们只需要调用这个 `main()`，就能获得一个智能滑块。
 
-Each of these "small Cycle.js `main()` functions" are called **dataflow components**. The sources which a dataflow component receives are streams provided by its parent, and sinks are streams given back to the parent. All along, we have been building dataflow components, because the `main()` given to `run(main, drivers)` is also a dataflow component. Its parent are the drivers, because that is where its sources come from and where its sinks go to.
+每一个“小的 Cycle.js `main()` 函数”都被称为 **数据流组件（dataflow component）**。一个数据流组件所接收的 sources 都是其父组件提供的流（streams），该组件返回的 sinks 则会回馈给父组件。在前文中，我们已经构建了数据流组件，传入 `run(main, drivers)` 的 `main()` 也是一个数据流组件，它的父组件就是各个 drivers，因为正是这些 drivers 给予了该组件需要的 sources，并且拿到了组件输出的 sinks。
 
 ![dataflow component](img/dataflow-component.svg)
 
-To learn by doing, let's just make a dataflow component for a single labeled slider. It should take user events as input, and generate a virtual DOM stream of a slider element. Besides the virtual DOM, it might also output a value: the stream of slider values. It might also take attributes (from its parent) as input to customize some behavior or looks. These are sometimes called *props* ("properties") in other frameworks.
+为了更好的理解 Cycle.js 中的组件，我们干脆亲自做一个数据流组件，这个组件是一个简单的带标签的滑块。该滑块组件接收用户事件作为输入，并输出一个滑块的虚拟 DOM 流，以及一个反映了滑块值的流。该组件也能从父组件接收一些参数来决定自己的行为和展示，在其他框架中，这些参数会被称为 **props** （属性）。
 
-## A labeled slider component
+## 栗子：labeled slider 组件
 
-A labeled slider has two parts: a label and slider, side by side, where the label always displays the current dynamic value of the slider.
+顾名思义，一个 labeled slider 组件由两个部分组成：一个标签（label）和一个滑块（slider），当滑块滑动时，标签能动态显示当前的滑块值。
 
 <a class="jsbin-embed" href="//jsbin.com/napoke/embed?output">JS Bin on jsbin.com</a>
 
-Every labeled slider has some properties:
+每个 labeled slider 都有下面这些属性：
 
- - Label text (`'Weight'`, `'Height'`, etc)
- - Unit text (`'kg'`, `'cm'`, etc)
- - Min value
- - Max value
- - Initial value
+- 标签文本（`'Weight'`，`'Height'` 等等）
+- 单位文本（`'kg'`，`'cm'` 等等）
+- 滑块最小值
+- 滑块最大值
+- 初始值
 
-These props can be encoded as an object, wrapped in a stream, and passed to our `main()` function as a *source* input:
+这些属性可以被编码为一个对象，并使用流进行包裹 `props$`，`main()` 可以通过 `sources.props` 获得属性：
 
 ```javascript
 function main(sources) {
@@ -69,7 +70,7 @@ function main(sources) {
 }
 ```
 
-To use this main function, we call `run`:
+之后调用 `run` 来使用这个 main 函数，并传入初始属性：
 
 ```javascript
 run(main, {
@@ -80,9 +81,9 @@ run(main, {
 });
 ```
 
-Remember that even though we are building a component, we are assuming our labeled slider to be our main program. Then, because `props` are an input given to the labeled slider from its parent, the only parent of `main()` in this case is `run`. That is why we need to configure `props` as a fake driver.
+需要牢记的是，即便我们只是在构建一个滑块组件，我们仍需要把构建组件当做是在构建一个 main 程序。接下来，由于 `props` 是 labeled slider 从其父组件所接收的输入，所以 `main()`  的唯一父组件在这个例子中就是 `run`。 正因如此，我们需要将 `props` 配置为一个伪 driver。
 
-The other input to this labeled slider program is the DOM source representing user events:
+另一个 labeled slider 程序需要的输入是 DOM source：
 
 ```diff
  function main(sources) {
@@ -93,7 +94,7 @@ The other input to this labeled slider program is the DOM source representing us
  }
 ```
 
-The remainder of the program is rather easy given that we've written the same labeled slider in the two previous chapters. However, this time we take props as the initial value.
+程序剩余部分就很简单了，和之前两章 labeled slider 代码如出一辙，只不过我们需要处理一下传入的初始值 props：
 
 ```javascript
 function main(sources) {
@@ -139,7 +140,7 @@ function main(sources) {
 }
 ```
 
-You might have noticed that besides the virtual DOM output, we also return the `value$` stream as a sink:
+或许你已经留意到了，除了输出一个虚拟 DOM 流，我们也返回了一个 `value$` 流作为一个 sink：
 
 ```diff
    // ...
@@ -151,21 +152,22 @@ You might have noticed that besides the virtual DOM output, we also return the `
  }
 ```
 
-This value stream is important as a sink if the parent wishes to use the numeric value for some calculations, such as that of BMI. In the program we wrote above, the parent of `main()` are the drivers. The drivers don't need to use `value$`, that's why we don't need a driver named `value`. However, when the parent of the slider component is another dataflow component, like in the next section, then `value$` will be important.
+如果 labeled slider 的父组件需要使用到滑块的数值，比如使用身高或者体重数值来计算 BMI（Body Mass Index：体质指数），那么 `value$` 就显得尤为必要了。在上面我们写的程序中，`main()` 的父组件是一些不需要用到 `value$` 的 drivers，因此，我们也不需要一个叫做 `value` 的 driver（即不需要一个处理 `value$` 的 driver）。但是，就像接下来会看到的，如果滑块组件的父组件是另一个数据流组件，`value$` 就很重要。
 
-> How to name sources/sinks?
+> 如何命名 sources/sinks ？
 >
-> You may have noticed that we chose the name `value` as a sink, not `value$`. Does this contradict our convention that streams should always be suffixed with `$`? Not particularly.
+> 你应该已经发现了我们使用 `value` 而不是 `value$` 来命名 sink。这样的命名方式乍看起来似乎与我们的对流的命名惯例（即每个流都需要跟一个后缀 `$`）相悖。但事实并非如此。
 >
-> Sources and sinks are an exception because they are special sockets that connect the internals of your component with the external world. Their names are just "keys" used to put or get streams. In the case of `main`, those keys need to match the same keys you gave to the `drivers` object in `run(main, drivers)`. Notice how each driver indexed by a key in the `drivers` object *is not* a stream. They are functions, because drivers are functions.
+> sources 和 sinks 是一个反例，因为二者扮演了 sockets 一般的角色，这些 sockets 连接了组件和外部世界。sources 和 sinks 的名字仅只是作为设置或者获取流的 “键（keys）”。在 `run(main, drivers)` 语句中，这些 keys 需要匹配 `drivers` 对象中的相同的 keys。可以看到，为什么在这些 drivers 对象中，
+由某个 key 索引的 driver 都不是一个流。它们是函数，因为 drivers 都是函数。
 >
-> This is why we shouldn't give the name `DOM$`, because in the `drivers` object, the value behind that key is a function (the DOM Driver), and in the `main` function, `sources.DOM` is the DOM Source object with methods like `select()` and `events()`.
+> 这也就是为什么我们不应该使用 `DOM$` 来命名 DOM sink，在 `drivers` 对象中，`DOM` 对应的 driver 是 DOM Driver，该 driver 是一个函数而不是一个流。并且，在 `main` 函数中，`sources.DOM` 是一个 DOM Source 对象（而不是流），它具有像 `select()` 和 `events()` 这样的方法。
 >
-> Try to maintain the convention that source and sink names are just *keys* in the sources object and sinks object. You may then "pick" your stream from the sources, like we did with `const props$ = sources.props;` for instance.
+> 命名 sink 的时候，使用简单的 **key** 来命名就行了，不需要遵从流命名的管理来添加后缀 `$`。之后，我们可以通过类似 `const props$ = sources.props` 的方式来从 sources 中获得我们需要的流。
 
-## Using a component
+## 使用组件
 
-Now that our dataflow component for a labeled slider is ready, we can use it in the context of a larger application. First, we will rename our component to `LabeledSlider`, and `main()` will refer to our larger application.
+现在，labeled slider 这个数据流组件已经整装待发了，我们可以在一个更大型的应用中使用它了。首先，我们先把组件重命名为 `LabeledSlider`，来和组件所处应用中的 `main()` 区分。
 
 ```diff
 -function main(sources) {
@@ -183,7 +185,7 @@ Now that our dataflow component for a labeled slider is ready, we can use it in 
 +}
 ```
 
-Since `LabeledSlider` is just a function, we can call it with some sources to get its sinks as output.
+由于 `LabeledSlider` 仅仅是一个函数，我们可以传递一些 sources 来调用该函数，获得它输出的 sinks。
 
 ```javascript
 function main(sources) {
@@ -194,18 +196,17 @@ function main(sources) {
   const labeledSlider = LabeledSlider(childSources);
   const childVDom$ = labeledSlider.DOM;
   const childValue$ = labeledSlider.value;
-
   // ...
 }
 ```
 
-> Why name components with CapitalCase?
+> 为什么使用大写命名法来命名 components ？
 >
-> You probably noticed we named the dataflow component as `LabeledSlider`. Usually in JavaScript, capitalized names are used for classes and constructor functions. Since Cycle.js uses functional programming techniques heavily, Object-oriented programming conventions are irrelevant, there are rarely (or never) classes in Cycle.js apps.
+> 你可能已经注意到了我们将上面的数据流组件命名为了 `LabeledSlider`。在 JavaScript 中，大写命名法通常用于类（class）和构造函数（constructor）的命名。由于 Cycle.js 大量使用了函数式编程技术，面向对象程序的命名惯例就无需在乎了，在 Cycle.js 中几乎甚至完全没有类。
 >
-> For this reason, capitalized names become available in the functional programming flavor of JavaScript. We will follow the convention of capitalized names such as `FooButton` for dataflow components (in other words, small Cycle.js apps). Their camel-case counterpart such as `fooButton` will refer to the output of `FooButton` function when called, i.e., the sinks object.
+> 据此，大写命名法在使用了函数式编程的 JavaScript 中也变得可用。我们不需要认为大写的名词代表了类或者构造函数，在 Cycle.js 中，使用大写命名法命名数据流组件将会是约定俗成的惯例。我们会使用 `FooButton` 来命名数据流组件，其对应的驼峰命名法 `fooButton` 则用于命名该组件输出的 sink 对象。
 
-Now we have `childVDom$` and `childValue$` as sinks from the labeled slider, available for use as regular streams in the context of the `main()` parent. We use `childValue$` to render a circle with radius equal to the slider's value, and use `childVDom$` to embed the slider's virtual DOM in the parent's virtual DOM:
+现在，我们分别使用 `childDom$` 和 `childValue$` 来命名 labeled slider 输出的 sink，方便了我们在父组件 `main()` 中把它们当做流来使用。`childValue$` 能够获得 slider 当前的值，根据这个值，我们将渲染对应半径大小的圆形。而 `childVDom$` 将拿到 slider 对应的虚拟 DOM，以嵌入到父组件的虚拟 DOM 中。
 
 ```javascript
 function main(sources) {
@@ -233,15 +234,15 @@ function main(sources) {
 }
 ```
 
-As a result, we get a Cycle.js program where the labeled slider controls the size of a rendered circle.
+最终，我们得到一个 Cycle.js 的应用，在这个应用中，labeled slider 控制了将要渲染的圆形的尺寸。
 
 <a class="jsbin-embed" href="//jsbin.com/yojoho/embed?output">JS Bin on jsbin.com</a>
 
-## Isolating multiple instances
+## 隔离组件实例
 
-Our labeled sliders were originally built for the BMI example, so we should see how the component we just built can be used in the BMI example.
+现在，我们看看如何使用 labeled slider 来构建 BMI 小程序。
 
-The naïve approach is to simply call `LabeledSlider()` twice, once with props for weight, and again with props for height:
+最原始的方式是调用两次 `LabeledSlider()`，一次传入体重需要的 props 来获得体重滑块，一次则是传入身高需要的 props 来获得身高滑块：
 
 <a class="jsbin-embed" href="//jsbin.com/lagegax/embed?output">JS Bin on jsbin.com</a>
 
@@ -250,6 +251,7 @@ function main(sources) {
   const weightProps$ = xs.of({
     label: 'Weight', unit: 'kg', min: 40, value: 70, max: 150
   });
+
   const heightProps$ = xs.of({
     label: 'Height', unit: 'cm', min: 140, value: 170, max: 210
   });
@@ -289,7 +291,7 @@ function main(sources) {
 }
 ```
 
-However, this creates a bug. Both labeled sliders change when any slider is moved. Can you see why? Pay attention to the implementation of `LabeledSlider` with this piece of code:
+不幸的是，程序出现了 bug。我们滑动任意一个滑块，另一个滑块也在跟着动。我们只有再次进入到 `LabeledSlider` 的实现中去一窥究竟：
 
 ```javascript
 function LabeledSlider(sources) {
@@ -304,16 +306,16 @@ function LabeledSlider(sources) {
 }
 ```
 
-Suppose we just ran this function for the weight labeled slider. The line `sources.DOM.select('.slider')` **will attempt to select all** `.slider` **elements on the entire DOM tree managed by this app**. This means both the `.slider` in the weight component and the `.slider` in the height component. As a result, the weight component will detect changes to both the height slider and the weight slider, which is a bug.
+假定我们仅仅调用该函数来获得一个体重滑块。语句 `sources.DOM.select('.slider')` **会在整个 DOM 树中选择所有**  `.slider` 元素。又由于我们的体重和身高组件的 css class 都是 `.slider`，因此，当我们滑动任意滑块时，两个滑块都会动。
 
-A component should not leak its output to other components, and it should not be able to detect outputs from other sibling components. In order to keep the nice property of "a component is just a Cycle.js app", we want two properties:
+各个组件之间应当互不干扰。为了保证 **一个组件仅只是一个 Cycle.js 应用**，我们还需要实现下面两个性质：
 
-- A component's **sources** are not affected by other components' sources.
-- A component's **sinks** do not affect other components' sinks.
+- 一个组件的 **sources**（输入）不会受其他组件 sources 的影响，
+- 一个组件的 **sinks**（输出）不会受到其他组件 sinks 的影响。
 
-In order to achieve these properties, we need to modify the sources when they enter the component, and also modify the sinks when they are returned from the component. To make sources and sinks isolated from influence of other components, we need to introduce a scope for the current component.
+为此，当 sources 传入组件时，当 sinks 从组件返回时，这两个对象我们都会稍加更改。为了让各个组件的 sources 和 sinks 相互隔离，我们需要为每个组件创建各自的 scope。
 
-For the DOM source and DOM sink, we can use a unique identifier string as namespace for the virtual DOM element. First, we patch the DOM sink, adding a className to the VNodes it emits.
+对于 DOM source 和 DOM sink，我们可以使用一个唯一标识符来作为每个虚拟 DOM 元素的命名空间。首先，我们会为 DOM sink 打个补丁，该流发出的 VNode 会被添加额外的 css class：
 
 ```diff
  function main(sources) {
@@ -340,7 +342,7 @@ For the DOM source and DOM sink, we can use a unique identifier string as namesp
  }
 ```
 
-This will result in the following rendered HTML:
+最终渲染的 HTML 如下：
 
 ```html
 <div class="labeled-slider weight">
@@ -349,11 +351,11 @@ This will result in the following rendered HTML:
 </div>
 ```
 
-For querying user events on these rendered sliders, the `weightSlider` dataflow component should detect user events *only* from the `<div class="labeled-slider weight">` element and its descendants when the stream `sources.DOM.select('.slider').events('input')` is used.
+滑动体重滑块时，即执行 `sources.DOM.select('.slider').events('input')` 时，**只**应该在 `<div class="labeled-slider weight">` 及其子孙元素上检测用户用户事件。
 
-In the context of the labeled slider component, **`sources.DOM.select()` should refer only to the elements that were created by the corresponding DOM sink in that component**.
+换言之，在任何一个 labeled slider component 中，**`sources.DOM.select()` 选中的 DOM，应当对应于该组件输出的 DOM sink**。
 
-We can achieve that by narrowing down the DOM source before it is given to the component, using the same className we patched on the sink, like this:
+在 `sources.DOM.select()` 中，使用与对 sink 打补丁时相同的 css class 就能能满足这样的需求。
 
 ```diff
  function main(sources) {
@@ -375,15 +377,15 @@ We can achieve that by narrowing down the DOM source before it is given to the c
  }
 ```
 
-> ### What does `select()` do?
+> ### `select()` 做了些什么？
 >
-> We have used `.select(selector).events(eventType)` many times previously to get a stream emitting DOM events of type `eventType` happening on the `selector` element(s).
+> 在前文中，我们多次使用了 `.select(selector).events(eventType)` 来获得 `selector` 对应元素发出的 `eventType` 类型的 DOM 事件流。
 >
-> In the code above, `sources.DOM` is a so-called "DOM Source", an object with some functions attached that help us query for the correct event stream. We also called `sources.DOM.select(selector)` without `.events(eventType)`, which returns a **new** DOM source, on which we can call again `select()` or `events()`.
+> 在上面的代码中，`sources.DOM` 被称为 “DOM source”，该对象绑定了一些函数来帮助我们查询 DOM 以及获得事件流。我们也会直接调用不带 `.events(eventType)` 的 `sources.DOM.select(selector)`，这样，语句会返回一个 **新的** DOM source，我们又可以在这个新的 DOM source 上调用 `select()` 或者 `events` 方法。
 >
-> `select('.foo').select('.bar').events('click')` returns a stream of click events happening on `'.foo .bar'` elements. In other words, these are all clicks happening on `'.bar'` elements descendants of `'.foo'` elements. The first call, `select('.foo')`, allows us to "narrow down" the scope of the DOM source.
+> `select('.foo').select('.bar').events('click')` 返回了一个发生在 `'.foo .bar'` 元素上的点击事件流。`select('.foo')` “收窄”了 DOM source 的 scope，让我们在更深一层 DOM source 上去寻找点击流。
 
-The code we wrote for isolating sources and sinks looks like boilerplate. Ideally we want to avoid manually managing scopes for each component instance using classNames:
+我们完成的用来隔离不同组件 sources 和 sinks 的代码看起来太过样板（boilerplate）了。理想状态下，我们想要避免手动设置 className 来限制组件的 scope：
 
 ```javascript
 function main(sources) {
@@ -410,7 +412,7 @@ function main(sources) {
 }
 ```
 
-To avoid repeating code, such as the `.map(vnode => ...)` which patches the VNode, we could extract the functionality into functions: `isolateDOMSink()` and `isolateDOMSource()`.
+为了减少代码重复，例如使用 `.map(vnode => ...)` 来为 VNodes 打补丁，我们可以抽象两个函数来分别隔离 DOM sink 和 DOM source：`isolateDOMSink()` ， `isolateDOMSource()`。
 
 ```diff
  function main(sources) {
@@ -441,7 +443,7 @@ To avoid repeating code, such as the `.map(vnode => ...)` which patches the VNod
  }
 ```
 
-Since these are very useful helper functions, they are packaged in Cycle DOM. They are available as static functions under the DOM source: `sources.DOM.isolateSource` and `sources.DOM.isolateSink`. This is how the `main()` function looks like when we use those functions:
+这两个非常有用的帮助函数已经被打包到了 Cycle DOM 中。二者可以被作为静态方法直接使用：`sources.DOM.isolateSource` ， `sources.DOM.isolateSink`。使用了这两个方法以后的 `main()` 函数如下：
 
 ```javascript
 function main(sources) {
@@ -474,9 +476,9 @@ function main(sources) {
 }
 ```
 
-The code above shows how we need to manually process the sources and sinks of a child component to make sure each child is run in an isolated context. It would be better, however, if we could just "isolate" a component and make source and sink isolation happen under the hood.
+上述代码中，我们需要手动每个组件的 sources 和 sinks 来保证它们之间运行在隔离的上下文中。如果我们能直接在底层“隔离”组件的 source 和 sink，就更好了。
 
-Such is the purpose of [`isolate()`](https://github.com/cyclejs/cyclejs/tree/master/isolate) (`npm install @cycle/isolate`), a helper function which handles calls to `isolateSource` and `isolateSink` for us. `isolate(Component, scope)` takes a dataflow component function `Component` as input, and outputs a dataflow component function which isolates the sources to `scope`, runs `Component`, then isolates its sinks to `scope` as well. Here is a heavily simplified implementation of `isolate()`:
+这正是函数 [`isolate()`](https://github.com/cyclejs/cyclejs/tree/master/isolate) （`npm install @cycle/isolate`）的由来。该函数内部调用了 `isolateSource` 和 `isolateSink` 。`isolate(Component, scope)` 接受一个数据流组件 `Component` 作为输入，输出一个 sources 和 scope 都被隔离到 `scope` 中的数据流组件。下面的代码块展示了 `isolate()` 的最简实现：
 
 ```javascript
 function isolate(Component, scope) {
@@ -492,7 +494,7 @@ function isolate(Component, scope) {
 }
 ```
 
-This allows us to simplify the `main()` function with two labeled slider components:
+现在，我们可以进一步简化我们的 `main()` 函数了：
 
 ```diff
  function main(sources) {
@@ -533,39 +535,39 @@ This allows us to simplify the `main()` function with two labeled slider compone
  }
 ```
 
-Notice the line which creates the `WeightSlider` component:
+注意到创建 `WeightSlider` 组件的代码：
 
 ```javascript
 const WeightSlider = isolate(LabeledSlider, 'weight');
 ```
 
-`isolate()` takes a non-isolated component `LabeledSlider` and restricts it to the `'weight'` scope, creating `WeightSlider`. The scope `'weight'` is only used in this line of code, and nowhere else. We can simplify this code a bit more, by making the scope parameter implicit:
+`isolate()` 接受一个没有被隔离的组件 `LabeledSlider` 并且将其限制到了 `'weight'` scope 中，最终输出了一个隔离好的组件 `WeightSlider`。这个 `'weight'` scope 只在这行代码使用了，其他地方并没有使用。因此，我们还可以通过不显式声明 scope 参数来进一步简化代码：
 
 ```javascript
 const WeightSlider = isolate(LabeledSlider);
 ```
 
-This does the same as previously, except the scope parameter is unique and autogenerated. The scope string itself was irrelevant to us, so we let `isolate()` generate some scope string for us.
+如果不显式传递 scope 参数，那么会自动生成一个全局唯一的 scope 字符串，我们不需要关心这个字符串到底是什么，只要知道它确实帮助我们隔离了组件实例就好。
 
-> ### Is `isolate()` pure?
+> ### `isolate()` 是否是纯函数？
 >
-> If we leave the scope parameter implicit for both weight and height sliders, then the code becomes
+> 如果我们对于身高和体重的滑块组件都不显式声明 scope 参数，那么代码就会是：
 >
 > `const WeightSlider = isolate(LabeledSlider);`<br />
 > `const HeightSlider = isolate(LabeledSlider);`
 >
-> Because the right-hand side is the same, does this mean `WeightSlider` and `HeightSlider` are the same component? **Certainly not.**
+> 由于等号右边的代码都是一样的，是否就意味着 `WeightSlider` 和 `HeightSlider` 是相同的组件？**当然不是这样。**
 >
-> `isolate()` with an implicit scope parameter is **not** referentially transparent. In other words, calling `isolate()` with an implicit scope is "impure". `WeightSlider` and `HeightSlider` are not the same components. Each one has its own unique scope parameter.
+> 没有声明 scope 参数的 `isolate()` **不是** 引用透明（referential transparency）的。换言之，隐式传递 scope 的 `isolate()` 是不纯的。`WeightSlider` 和 `HeightSlider` 不是相同的组件，二者有各自唯一的 scope 参数。  
 >
-> On the other hand, when using an explicit scope parameter, then `isolate()` is referentially transparent. In other words, `Foo` and `Fuu` are the same here:
+> 另一方面，如果显式传递了 scope 参数，`isolate()` 则是引用透明的，下面的代码中，`Foo` 和 `Fuu` 就是相同的：
 >
 > `const Foo = isolate(LabeledSlider, 'myScope');`<br />
 > `const Fuu = isolate(LabeledSlider, 'myScope');`
 >
-> Since Cycle.js follows functional programming techniques, usually most of its API is referentially transparent. `isolate()` is an exception, for convenience. If you want referential transparency everwhere, then provide explicit scope parameters. If you want convenience and you know how `isolate()` works, then use implicit scope parameters.
+> 由于 Cycle.js 谨遵函数式编程技术，因此，其大部分 API 都是引用透明的。但为了方便，`isolate()` 则成为了一个例外。如果你追求任何时候任何地点都引用透明，那么就显示传递 scope 参数吧。如果你为了方便，并且知道 `isolate()` 是怎么工作的，就不用传递 scope 参数了。
 
-If we compare our last code with the code we initially started out naïvely for `main()` to make the BMI calculator, the only difference is the use of `isolate()` on child components:
+对比下我们一开始的 BMI 计算器代码，唯一的区别仅仅是现在通过 `isolate()` 进行了组件隔离：
 
 ```diff
  function main(sources) {
@@ -613,21 +615,22 @@ If we compare our last code with the code we initially started out naïvely for 
  }
 ```
 
-The takeaway is: **when creating multiple instances of the same type of component, just remember to `isolate` each.**
+需要牢记的是：**当创建相同类型组件的多个实例时，要对每个实例进行 `isolate`。**
 
 <a class="jsbin-embed" href="//jsbin.com/seqehat/embed?output">JS Bin on jsbin.com</a>
 
 ## Recap
 
-To achieve reusability, **any Cycle.js app is simply a function that can be reused as a component in larger Cycle.js app**. Sources and sinks are the interface between the application and the drivers, but they are also the interface between a child component and its parent.
+为了实现组件的可重用性，**任何 Cycle.js 组件都只是一个函数，这个函数可以被用在任何的更大的 Cycle.js 应用中**。sources 和 sinks 是应用和 driver 间的接口，同时也是子组件及其父组件间的接口。
 
 ![nested components](img/nested-components.svg)
 
-From a component's perspective, it should make no assumption on what the parent is. The parent could either be the drivers if the component is used as the `main()`, or the parent could be any other component. For this reason, a component should assume its sources contain only data related to itself. Therefore, the sources and sinks of a component must be *isolated*.
+从组件视角来看，它不用关心它的父组件、或者父亲容器是什么。如果该组件被用作了 `main()`，那么其父组件就是 drivers，当然，父组件也可以是其他的数据流组件。据此，一个组件应当假定它的 sources 只含有与它自己相关的数据。亦即，一个组件的 sources 和 sinks 都需要被 **隔离**。
 
-Use `isolateSource` and `isolateSink` to separate the execution contexts of sibling components or unrelated components. Use `isolate` to create a component that automatically applies `isolateSource` and `isolateSink`. This way your codebase will be safe against [*collisions*](https://en.wikipedia.org/wiki/Collision_%28computer_science%29), and each component can work as if it would be the only one in the application.
+使用 `isolateSource` 和 `isolateSink` 来隔离兄弟组件或者不相关组件的执行上下文。而使用 `isolate` 来创建一个隔离组件，它的内部已经调用了`isolateSource` 和 `isolateSink`。通过隔离，能防止[代码**冲突（collisions）**](https://en.wikipedia.org/wiki/Collision_%28computer_science%29)，每个组件可以工作得就像当前应用只有这一个组件一样。
 
-Each driver should define static functions `isolateSource` and `isolateSink`. We only saw those functions implemented for the DOM Driver, but there are other use cases with other drivers where it makes sense to apply the same isolation techniques. To learn more, read about [Drivers](drivers.html).
+每一个 driver 应当定义静态方法 `isolateSource` 和 `isolateSink`。但我们发现，只在 DOM Driver 中，提供了这两个方法，但是，也有一些其他的 driver 用例展示了隔离技术的重要意义。想要学习更多，就请接着阅读 [Drivers](drivers.html)
+
   </script>
 
   <!-- Initializer -->
@@ -651,8 +654,8 @@ Each driver should define static functions `isolateSource` and `isolateSink`. We
     <div class='left'>
       <h1><a href="/"><img class="logo" src="img/cyclejs_logo.svg" >Cycle.js</a></h1>
       <ul>
-        <li><a href='getting-started.html'>Documentation</a></li>
-        <li><a href='api/index.html'>API reference</a></li>
+        <li><a href='getting-started.html'>中文文档</a></li>
+        <li><a href='api/index.html'>API 索引</a></li>
         <li><a href='releases.html'>Releases</a></li>
         <li><a href='https://github.com/cyclejs/cyclejs'>GitHub</a></li>
       </ul>
@@ -674,11 +677,11 @@ Each driver should define static functions `isolateSource` and `isolateSink`. We
   
             <li><a href="dialogue.html" class="level-1 out-link">对话抽象</a></li>
   
-            <li><a href="streams.html" class="level-1 out-link">Streams</a></li>
+            <li><a href="streams.html" class="level-1 out-link">流</a></li>
   
-            <li><a href="basic-examples.html" class="level-1 out-link">Basic examples</a></li>
+            <li><a href="basic-examples.html" class="level-1 out-link">基本例子</a></li>
   
-            <li><a href="model-view-intent.html" class="level-1 out-link">Model-View-Intent</a></li>
+            <li><a href="model-view-intent.html" class="level-1 out-link">model-view-intent</a></li>
   
         </ul>
 
@@ -690,10 +693,16 @@ Each driver should define static functions `isolateSource` and `isolateSink`. We
   
         </ul>
 
+
       </div>
     </div>
     <div role='flatdoc-content' class='content'></div>
 
+    <footer style="text-align: center">
+      <a href="http://www.miitbeian.gov.cn/" target="_blank">
+        粤ICP备14056081号-3
+      </a>
+    </footer>
   </div>
 
 

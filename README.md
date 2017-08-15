@@ -1,5 +1,7 @@
 # Cyclejs.cn —— Cycle.js 中文文档网站
 
+[![Gitter](https://badges.gitter.im/CyclejsCN/cyclejs.cn.svg)](https://gitter.im/CyclejsCN/cyclejs.cn?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
+
 这是 Cycle.js 中文文档网站 Cyclejs.cn 的仓库，发现任何翻译上或者文档版本落后等问题，欢迎提 issue 或直接发 PR！
 
 ## 如何参与翻译？
@@ -47,6 +49,58 @@
 
 [zhouweicsu](https://github.com/zhouweicsu)
 
+![Jeason](https://avatars3.githubusercontent.com/u/17971291?v=4&s=100)
+
+[Jeason](https://github.com/jeasonstudio)
+
 ![Tina92](https://avatars2.githubusercontent.com/u/17871352?v=4&s=100)
 
 [Tina92](https://github.com/Tina92)
+
+![SZzzzz](https://avatars1.githubusercontent.com/u/14255636?v=4&s=100)
+
+[SZzzzz](https://github.com/SZzzzz)
+
+![linxiangjun](https://avatars2.githubusercontent.com/u/20981110?v=4&s=100)
+
+[linxiangjun](https://github.com/linxiangjun)
+
+![panricas](https://avatars3.githubusercontent.com/u/20414868?v=4&s=100)
+
+[panricas](https://github.com/panricas)
+
+![jasonxia23](https://avatars0.githubusercontent.com/u/15098719?v=4&s=100)
+
+[jasonxia23](https://github.com/jasonxia23)
+
+![yangzj1992](https://avatars0.githubusercontent.com/u/4526861?v=4&s=100)
+
+[yangzj1992](https://github.com/yangzj1992)
+
+![ethansure](https://avatars0.githubusercontent.com/u/11581909?v=4&s=100)
+
+[ethansure](https://github.com/ethansure)
+
+![zhengxiaowai](https://avatars1.githubusercontent.com/u/8123309?v=4&s=100)
+
+[zhengxiaowai](https://github.com/zhengxiaowai)
+
+![xunge0613](https://avatars0.githubusercontent.com/u/1448574?v=4&s=100)
+
+[xunge0613](https://github.com/xunge0613)
+
+![ZexuanTHU](https://avatars3.githubusercontent.com/u/20542668?v=4&s=100)
+
+[ZexuanTHU](https://github.com/ZexuanTHU)
+
+![island205](https://avatars1.githubusercontent.com/u/610094?v=4&s=100)
+
+[island205](https://github.com/island205)
+
+![yct21](https://avatars3.githubusercontent.com/u/3829004?v=4&s=100)
+
+[yct21](https://github.com/yct21)
+
+![imnotnerd](https://avatars3.githubusercontent.com/u/12033420?v=4&s=100)
+
+[imnotnerd](https://github.com/imnotnerd)

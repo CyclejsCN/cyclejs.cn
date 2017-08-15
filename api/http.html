@@ -4,7 +4,8 @@
   <meta charset='utf-8'>
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
   <meta name="viewport" content="width=device-width">
-  <title>Cycle.js - API reference (http)</title>
+  <meta name="keyword" content="cycle.js,中文,cyclejs 中文,javascript,functional,函数式,reactive,响应式">
+  <title>Cycle.js - API 索引</title>
 
   <!-- Flatdoc -->
   <script src='../support/vendor/jquery.js'></script>
@@ -24,22 +25,22 @@
   <link href='../support/vendor/highlight-github-gist.css' rel='stylesheet'>
 
   <!-- Meta -->
-  <meta content="Cycle.js - API reference (http)" property="og:title">
-  <meta content="A functional and reactive JavaScript framework for predictable code" name="description">
+  <meta content="Cycle.js - API 索引" property="og:title">
+  <meta content="一个函数式和响应式的 JavaScript 框架，用来编写前瞻性代码。" name="description">
 
   <!-- Content -->
   <script id="markdown" type="text/markdown" src="index.html">
 # Cycle HTTP
 
-A Driver for making HTTP requests, based on [superagent](https://github.com/visionmedia/superagent).
+发送 HTTP 请求的 driver，底层基于 [superagent](https://github.com/visionmedia/superagent) 实现。
 
 ```
 npm install @cycle/http
 ```
 
-## Usage
+## 用法
 
-Basics:
+基础：
 
 ```js
 import xs from 'xstream';
@@ -57,12 +58,12 @@ const drivers = {
 run(main, drivers);
 ```
 
-Simple and normal use case:
+常见的用法：
 
 ```js
 function main(sources) {
   let request$ = xs.of({
-    url: 'http://localhost:8080/hello', // GET method by default
+    url: 'http://localhost:8080/hello', // 默认使用 GET 方法
     category: 'hello',
   });
 
@@ -71,7 +72,7 @@ function main(sources) {
     .flatten();
 
   let vdom$ = response$
-    .map(res => res.text) // We expect this to be "Hello World"
+    .map(res => res.text) // 返回值应该是 "Hello World"
     .startWith('Loading...')
     .map(text =>
       div('.container', [
@@ -86,67 +87,60 @@ function main(sources) {
 }
 ```
 
-A thorough guide to the API inside `main`:
+一个完整的 API 示例，在 `main` 函数中：
 
 ```js
 function main(source) {
-  // The HTTP Source has properties:
+  // HTTP Source 属性：
   // - select(category) or select()
   // - filter(predicate)
-  // Notice $$: it means this is a metastream, in other words,
-  // a stream of streams.
+  // 注意 $$ 表示这是一个 metastream，即 stream 的 stream
   let httpResponse$$ = source.HTTP.select();
 
   httpResponse$$.addListener({
     next: httpResponse$ => {
-      // Notice that httpResponse$$ emits httpResponse$.
+      // 注意 httpResponse$$ 触发 httpResponse$。
 
-      // The response stream has a special field attached to it:
-      // `request`, which is the same object we emit in the sink stream.
-      // This is useful for filtering: you can find the
-      // httpResponse$ corresponding to a certain request.
+      // response stream 包含一个特殊的属性：
+      // `request`， 与触发 sink stream 时的 `request` 对象相同。
+      // 可以用来过滤与特定 request 对应的 httpResponse$。
       console.log(httpResponse$.request);
     },
     error: () => {},
     complete: () => {},
   });
 
-  let httpResponse$ = httpResponse$$.flatten(); // flattens the metastream
-  // the reason why we need to flatten in this API is that you
-  // should choose which concurrency strategy to use.
-  // Normal xstream flatten() has limited concurrency of 1, meaning that
-  // the previous request will be canceled once the next request to the
-  // same resource occurs.
-  // To have full concurrency (no cancelling), use flattenConcurrently()
+  let httpResponse$ = httpResponse$$.flatten(); // 将 metastream 压平
+  // 为什么要在 API 中提供 flatten 函数？Cycle.js 要求用户必须在不同的并行策略之间做出选择。
+  // xstream 常用的 `flatten()` 有并发数为 1 的限制，一旦针对同一资源的请求发生时，前面的相同的请求将会被取消。
+  // 如果想全部并行处理（没有取消的情况），请使用 `flattenConcurrently()`。
 
   httpResponse$.addListener({
     next: httpResponse => {
-      // httpResponse is the object we get as response from superagent.
-      // Check the documentation in superagent to know the structure of
-      // this object.
+      // httpResponse 即为从 superagent 获得的 response 对象，
+      // 想要了解该对象的结构，可以查看 superagent 的文档。
       console.log(httpResponse.status); // 200
     },
     error: (err) => {
-      // This is a network error
+      // 网络错误
       console.error(err);
     },
     complete: () => {},
   });
 
-  // The request stream is an object with property `url` and value
-  // `http://localhost:8080/ping` emitted periodically, every second.
+  // 这个 request stream 周期性地产生对象，对象有一个 `url` 属性，值为 `http://localhost:8080/ping`。
   let request$ = xs.periodic(1000)
     .mapTo({ url: 'http://localhost:8080/ping', method: 'GET' });
 
   return {
-    HTTP: request$ // HTTP driver expects the request$ as input
+    HTTP: request$ // HTTP driver 将 request$ 当做输入。
   };
 }
 ```
 
-## Error handling
+## 出错处理
 
-You can handle errors using standard xstream or RxJS operators. The response stream is a stream of streams, i.e. each response will be its own stream so usually you want to catch errors for that single response stream:
+可以使用 xstream 或者 RxJS 的规范的操作来处理错误。因为 response stream 是 stream 的 stream，每一个 stream 都有自己的 response，因此你应当为这样的每一个 response stream 提供错误处理：
 
 ```js
 sources.HTTP
@@ -155,93 +149,66 @@ sources.HTTP
     response$.replaceError(() => xs.of(errorObject))
   ).flatten()
 ```
-For more information, refer to the [xstream documentation for replaceError](https://github.com/staltz/xstream#replaceError) or the [RxJS documention for catch](https://github.com/Reactive-Extensions/RxJS/blob/master/doc/api/core/operators/catch.md).
 
-## More information
+更多的信息可以查看 [xstream 关于 replaceError 的文档 ](https://github.com/staltz/xstream#replaceError) 或者 [RxJS catch 相关的文档](https://github.com/Reactive-Extensions/RxJS/blob/master/doc/api/core/operators/catch.md)
 
-For a more advanced usage, check the [Search example](https://github.com/cyclejs/cyclejs/tree/master/examples/http-search-github).
+## 其他信息
 
-## Browser support
+更多高级的用法，可以参看[搜索示例](https://github.com/cyclejs/cyclejs/tree/master/examples/http-search-github)
+
+## 浏览器支持
 
 [![Sauce Test Status](https://saucelabs.com/browser-matrix/cyclejs-http.svg)](https://saucelabs.com/u/cyclejs-http)
 
-IE 8 is not supported because this library depends on [superagent](https://github.com/visionmedia/superagent), which knowingly doesn't support IE 8.
+不支持 IE8，因为依赖的 [superagent](https://github.com/visionmedia/superagent) 不支持。
 
-# Isolation semantics
+# 隔离语义
 
-Cycle HTTP supports isolation between components using the `@cycle/isolate` package. Here is how isolation contexts work in Cycle HTTP given a `scope` to `isolate(Component, scope)`:
+Cycle HTTP 通过 `@cycle/isolate` 支持组件的隔离。下面讲一讲给 `isolate(Component, scope)` 传递不同的 `scope`，隔离上下文是如何工作的。
 
-**When the scope is `null`: no isolation.**
+**scope 为 `null` 时，无隔离。**
 
-The child component will have run in the same context as its parent, and methods like `HTTPSource.select()` will have access to response streams related to the parent. This means the child component is able to see responses that it did not itself produce.
+父子组件运行在同一个上下文当中，在子组件中调用类似 `HTTPSource.select()` 方法时可以获取到与父组件相关的 response stream。这意味着，子组件可以看到非自己产生的 reponse。
 
-**When the scope is a string: siblings isolation.**
+**scope 为字符串：siblings isolation（兄弟组件隔离）**
 
-A `HTTPSource.select()` call in a parent component will have access to HTTP responses from its children. However, a `HTTPSource.select()` inside a child component isolated with "siblings isolation" will have no access to HTTP responses in other children components isolated with "siblings isolation".
+在父组件中调用 `HTTPSource.select()` 可以获取到其子组件的 HTTP response。但是，使用“siblings isolation”隔离策略的子组件无法访问到其他采用同样策略“siblings isolation”子组件的 HTTP response。
 
 # API
 
 
-## <a id="makeHTTPDriver"></a> `makeHTTPDriver()`
+## `makeHTTPDriver()`
 
-HTTP Driver factory.
+HTTP Driver 工厂函数。
 
-This is a function which, when called, returns a HTTP Driver for Cycle.js
-apps. The driver is also a function, and it takes a stream of requests as
-input, and outputs an HTTP Source, an object with some functions to query for
-response streams.
+函数，调用返回一个可用于 Cycle.js 应用的 HTTP Driver。这个 driver 同样是一个函数，接收 request stream 作为输入，输出 HTTP Source。HTTP Source 是一个对象，拥有若干函数用于 response stream 的查询。
 
-**Requests**. The stream of requests should emit either strings or objects.
-If the stream emits strings, those should be the URL of the remote resource
-over HTTP. If the stream emits objects, these should be instructions how
-superagent should execute the request. These objects follow a structure
-similar to superagent's request API itself. `request` object properties:
+**Request**。request stream 输出字符串或者对象。如果输出的是字符串，就是代表一个 URL 地址，指向一个远程可通过 HTTP 请求的资源。如果输出的对象，这个对象等价于 superagent 请求的配置对象。即对象结构与 supergent request API 的配置类似。`request` 对象的属性包括：
 
-- `url` *(String)*: the remote resource path. **required**
-- `method` *(String)*: HTTP Method for the request (GET, POST, PUT, etc).
-- `category` *(String)*: an optional and arbitrary key that may be used in
-the HTTP Source when querying for the response. E.g.
-`sources.http.select(category)`
-- `query` *(Object)*: an object with the payload for `GET` or `POST`.
-- `send` *(Object)*: an object with the payload for `POST`.
-- `headers` *(Object)*: object specifying HTTP headers.
-- `accept` *(String)*: the Accept header.
-- `type` *(String)*: a short-hand for setting Content-Type.
-- `user` *(String)*: username for authentication.
-- `password` *(String)*: password for authentication.
-- `field` *(Object)*: object where key/values are Form fields.
-- `progress` *(Boolean)*: whether or not to detect and emit progress events
-on the response Observable.
-- `attach` *(Array)*: array of objects, where each object specifies `name`,
-`path`, and `filename` of a resource to upload.
-- `withCredentials` *(Boolean)*: enables the ability to send cookies from the
-origin.
-- `agent` *(Object)*: an object specifying `cert` and `key` for SSL
-certificate authentication.
-- `redirects` *(Number)*: number of redirects to follow.
-- `lazy` *(Boolean)*: whether or not this request runs lazily, which means
-the request happens if and only if its corresponding response stream from the
-HTTP Source is subscribed to. By default this value is false: requests run
-eagerly, even if their response is ignored by the application.
-- `responseType` *(String)*: setting for XHR responseType.
+- `url` **（String）**：远程资源路径。**必选**；
+- `method` **（String）**：request 的 HTTP 方法（GET、POST、PUT 等等）；
+- `category` **（String）**：可选，自定义 key。可以用在 HTTP Source 中，比如要查询相关的 response 时：`sources.http.select(category)`；
+- `query` **（Object）**：对象，发送 `GET` 或者 `POST` 时的 payload；
+- `send` **（Object）**：对象，发送 `POST` 时的 payload；
+- `headers` **（Object）**：对象，设定 HTTP 请求头；
+- `accept` **（String）**：设置 HTTP 请求头 Accept 值；
+- `type` **（String）**：设置请求头 Content-Type 值，简写；
+- `user` **（String）**：用于登录验证的用户名；
+- `password` **（String）**：用于登录验证的密码；
+- `field` **（Object）**：对象，Form 字段对应的 key/value 值；
+- `progress` **（Boolean）**：配置是否跟踪并在 response Observable 上触发 progress 事件；
+- `attach` **（Array）**：对象数组，每个对象包含 `name`、`path`和`filename` 属性，代表一个上传资源；
+- `withCredentials` **（Boolean）**：开启跨域请求携带目标域的 cookie 信息；
+- `agent` **（Object）**：对象，指定 SSL 证书认证所需的 `cert` 和 `key`；
+- `redirects` **（Number）**：允许重定向的次数；
+- `lazy` **（Boolean）**：是否启用延迟请求模式；在 HTTP Source 上对应的 response stream 被订阅时才发出请求。默认值为 `false`：无论 response 是否会被应用使用，请求都会尽早发出；
+- `responseType` **（String）**：设置 XHR 的 responseType。
 
-**Responses**. A metastream is a stream that emits streams. The HTTP Source
-manages response metastreams. These streams of responses have a `request`
-field attached to them (to the stream object itself) indicating which request
-(from the driver input) generated this response streams. The HTTP Source has
-functions `filter()` and `select()`, but is not itself a stream. So you can
-call `sources.HTTP.filter(request => request.url === X)` to get a new HTTP
-Source object which is filtered for response streams that match the condition
-given, and may call `sources.HTTP.select(category)` to get a metastream of
-response that match the category key. With an HTTP Source, you can also call
-`httpSource.select()` with no param to get the metastream. You should flatten
-the metastream before consuming it, then the resulting response stream will
-emit the response object received through superagent.
+**Responses**：metastream 就是输出 stream 的 stream。HTTP Source 管理 response 的 metastream。这些 response 的 stream 自身有一个 `request` 属性值，指明来自 driver 输入的哪个 request 产生了自己。HTTP Source 自己本身并不是 stream，但它有两个方法，`filter()` 和 `select()`，所以可以调用 `sources.HTTP.filter(request => request.url === X)`，过滤出满足条件的 response stream，获得一个新的 HTTP Source；还可以调用  `sources.HTTP.select(category)`，获取与 `category` 键值相匹配的 response 的 metastream。甚至，还可以直接不传参调用`httpSource.select()`，获得全部的 metastream。在消费 metastream 前必须将其压平（flatten），在 response stream 中将会收到来由 superagent 产生的响应对象。
 
-#### Returns:
+#### 返回：
 
-*(Function)* the HTTP Driver function
-
+**（Function）** HTTP Driver 函数
 
   </script>
 
@@ -266,8 +233,8 @@ emit the response object received through superagent.
     <div class='left'>
       <h1><a href="/"><img class="logo" src="../img/cyclejs_logo.svg" >Cycle.js</a></h1>
       <ul>
-        <li><a href='../getting-started.html'>Documentation</a></li>
-        <li><a href='../api/index.html'>API reference</a></li>
+        <li><a href='../getting-started.html'>中文文档</a></li>
+        <li><a href='../api/index.html'>API 索引</a></li>
         <li><a href='../releases.html'>Releases</a></li>
         <li><a href='https://github.com/cyclejs/cyclejs'>GitHub</a></li>
       </ul>
@@ -285,10 +252,38 @@ emit the response object received through superagent.
 
         <div role='flatdoc-menu'></div>
 
+        <ul>
+  
+            <li><a href="../api/run.html" class="level-1 out-link">Cycle Run</a></li>
+  
+            <li><a href="../api/rxjs-run.html" class="level-1 out-link">Cycle RxJS Run</a></li>
+  
+            <li><a href="../api/most-run.html" class="level-1 out-link">Cycle Most Run</a></li>
+  
+            <li><a href="../api/dom.html" class="level-1 out-link">Cycle DOM</a></li>
+  
+            <li><a href="../api/html.html" class="level-1 out-link">Cycle HTML</a></li>
+  
+            <li><a href="../api/http.html" class="level-1 out-link">Cycle HTTP</a></li>
+  
+            <li><a href="../api/history.html" class="level-1 out-link">Cycle History</a></li>
+  
+            <li><a href="../api/isolate.html" class="level-1 out-link">Cycle Isolate</a></li>
+  
+            <li><a href="../api/jsonp.html" class="level-1 out-link">Cycle JSONP</a></li>
+  
+        </ul>
+
+
       </div>
     </div>
     <div role='flatdoc-content' class='content'></div>
 
+    <footer style="text-align: center">
+      <a href="http://www.miitbeian.gov.cn/" target="_blank">
+        粤ICP备14056081号-3
+      </a>
+    </footer>
   </div>
 
 
