@@ -1,5 +1,7 @@
 # Cyclejs.cn —— Cycle.js 中文文档网站
 
+[![Join the chat at https://gitter.im/CyclejsCN/cyclejs.cn](https://badges.gitter.im/CyclejsCN/cyclejs.cn.svg)](https://gitter.im/CyclejsCN/cyclejs.cn?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 [![Gitter](https://badges.gitter.im/CyclejsCN/cyclejs.cn.svg)](https://gitter.im/CyclejsCN/cyclejs.cn?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
 这是 Cycle.js 中文文档网站 Cyclejs.cn 的仓库，发现任何翻译上或者文档版本落后等问题，欢迎提 issue 或直接发 PR！
