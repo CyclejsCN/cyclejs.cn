@@ -120,7 +120,7 @@ sources 和 sinks 是存在于应用程序和 drivers 之间的接口，但是�
   <img src="img/egghead.svg">
 </p>
 
-只用 1 小时 27 分钟？这些内容就是学习 Cycle.js 的基本要素。可以观看由 Cycle.js 作者制作[**免费 Egghead.io 的视频教程**](https://egghead.io/series/cycle-js-fundamentals) 。通过跟着从头开始构建理解 Cycle.js，然后学习如何把你的想法转化成应用程序。
+只用 1 小时 37 分钟？这些内容就是学习 Cycle.js 的基本要素。可以观看由 Cycle.js 作者制作[**免费 Egghead.io 的视频教程**](https://egghead.io/series/cycle-js-fundamentals) 。通过跟着从头开始构建理解 Cycle.js，然后学习如何把你的想法转化成应用程序。
 
 ## Supports...
 
